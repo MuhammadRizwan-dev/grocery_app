@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grocery_app/screens/search_screen.dart';
 import 'package:grocery_app/screens/selectFilter_screen.dart';
-
 import '../components/utils.dart';
 
 class SubproductsScreen extends StatefulWidget {
