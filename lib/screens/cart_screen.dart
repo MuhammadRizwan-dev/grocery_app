@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/data/cart_data.dart';
 import 'package:grocery_app/screens/checkOut_screen.dart';
