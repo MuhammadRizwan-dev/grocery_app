@@ -150,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 48.h,
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
@@ -159,14 +159,29 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                  icon: Icon(Icons.logout, color: AppColors.primaryColor),
-                  label: Text(
-                    'Log Out',
-                    style: TextStyle(
-                      fontFamily: "Gilroy",
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryColor,
-                    ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.logout, color: AppColors.primaryColor),
+                          SizedBox(
+                            width: 10.w,
+                          ), // Gap between icon and text (optional if needed)
+                        ],
+                      ),
+                      Center(
+                        child: Text(
+                          'Log Out',
+                          style: TextStyle(
+                            fontFamily: "Gilroy",
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
