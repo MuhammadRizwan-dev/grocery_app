@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/screens/selectFilter_screen.dart';
 import '../components/utils.dart';
 
@@ -72,14 +73,7 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SelectfilterScreen();
-                  },
-                ),
-              );
+              Get.back();
             },
             icon: SvgPicture.asset(
               "assets/settingIcon.svg",
