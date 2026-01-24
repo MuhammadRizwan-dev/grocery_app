@@ -13,12 +13,12 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   final List<Color> colors = [
-    Color(0xff53B175B2),
-    Color(0xffF8A44CB2),
-    Color(0xffF7A593),
-    Color(0xffD3B0E0),
-    Color(0xffFDE598),
-    Color(0xffB7DFF5),
+    const Color(0xff53B175).withValues(alpha: 26), // 10%
+    const Color(0xffF8A44C).withValues(alpha: 26), // 10%
+    const Color(0xffF7A593).withValues(alpha: 64), // 25%
+    const Color(0xffD3B0E0).withValues(alpha: 64), // 25%
+    const Color(0xffFDE598).withValues(alpha: 64), // 25%
+    const Color(0xffB7DFF5).withValues(alpha: 64), // 25%
   ];
   final List<Map<String, String>> allItems = [
     {
@@ -87,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintText: "Search products",
                 prefixIcon: Icon(Icons.search, size: 20.sp),
                 filled: true,
-                fillColor: AppColors.lightGrey.withOpacity(0.3),
+                fillColor: AppColors.lightGrey.withValues(alpha: 76),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide.none,

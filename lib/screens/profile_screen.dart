@@ -163,22 +163,20 @@ class ProfileScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Icon(Icons.logout, color: AppColors.primaryColor),
                           SizedBox(
                             width: 10.w,
-                          ), // Gap between icon and text (optional if needed)
+                          ),
                         ],
                       ),
-                      Center(
-                        child: Text(
-                          'Log Out',
-                          style: TextStyle(
-                            fontFamily: "Gilroy",
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryColor,
-                          ),
+                      Text(
+                        'Log Out',
+                        style: TextStyle(
+                          fontFamily: "Gilroy",
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryColor,
                         ),
                       ),
                     ],

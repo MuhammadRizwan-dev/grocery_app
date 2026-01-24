@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:grocery_app/root/app_root.dart';
 
 class Utils {
   Utils._();
@@ -103,7 +104,7 @@ class Utils {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  "Something went tembly wrong.",
+                  "Something went terribly wrong.",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
@@ -113,14 +114,18 @@ class Utils {
                 SizedBox(height: 40.h),
                 AppButtons.socialButton(
                   text: "Please Try Again",
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.back();
+                  },
                   bgColor: AppColors.primaryColor,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.offAll(()=> AppRoot());
+                  },
                   child: Text(
                     "Back to home",
-                    style: TextStyle(
+                    style: TextStyle(color: Colors.black,
                       fontFamily: "Gilroy",
                       fontWeight: FontWeight.w600,
                     ),
@@ -198,7 +203,7 @@ class AppGradients {
     colors: [
       const Color(0xFFFFD1DC),
       const Color(0xFFFFF0F5),
-      Color(0x66FFFFFF), // ← 0.4 opacity white (hex mein: 66 = 40% opacity)
+      Color(0x66FFFFFF),
       Colors.white,
     ],
     stops: const [0.0, 0.4, 0.75, 1.0],

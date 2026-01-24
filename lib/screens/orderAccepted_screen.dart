@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/shop_screen.dart';
+
+import '../root/app_root.dart';
 
 class OrderacceptedScreen extends StatelessWidget {
   const OrderacceptedScreen({super.key});
@@ -49,18 +53,11 @@ class OrderacceptedScreen extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ShopScreen();
-                      },
-                    ),
-                  );
+                  Get.offAll(()=> AppRoot());
                 },
                 child: Text(
                   "Back to home",
-                  style: TextStyle(
+                  style: TextStyle(color : Colors.black,
                     fontFamily: "Gilroy",
                     fontWeight: FontWeight.w600,
                     fontSize: 20.sp,
