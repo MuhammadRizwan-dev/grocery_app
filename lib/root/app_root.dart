@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/favourite_screen.dart';
-import 'package:grocery_app/screens/profile_screen.dart';
-import '../screens/shop_screen.dart';
-import '../screens/search_screen.dart';
+
 import '../screens/cart_screen.dart';
+import '../screens/logIn_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/search_screen.dart';
+import '../screens/shop_screen.dart';
 
 class AppRoot extends StatefulWidget {
   const AppRoot({super.key});
@@ -24,6 +29,26 @@ class _AppRootState extends State<AppRoot> {
     FavouriteScreen(),
     ProfileScreen(),
   ];
+  void initState() {
+    super.initState();
+    checkUserStatus();
+  }
+
+  void checkUserStatus() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance.collection('users').doc(uid).snapshots().listen((
+      snapshots,
+    ) {
+      if (snapshots.exists) {
+        String status = snapshots.data()?['status'] ?? "active";
+        if (status == "blocked" || status == "stopped") {
+          FirebaseAuth.instance.signOut();
+          Get.offAll(() => LoginScreen());
+          Utils.showSnackBar("Your account has been disabled by Admin.");
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +57,7 @@ class _AppRootState extends State<AppRoot> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
-        type: BottomNavigationBarType.fixed,           // important for 5 items
+        type: BottomNavigationBarType.fixed, // important for 5 items
         selectedItemColor: AppColors.primaryColor,
         unselectedItemColor: AppColors.lightGrey,
         showUnselectedLabels: true,

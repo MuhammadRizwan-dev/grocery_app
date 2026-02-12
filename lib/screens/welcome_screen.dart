@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/signIn_screen.dart';
-
+import 'package:get/get.dart';
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -19,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
           Positioned(
             bottom: 30,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Ger your groceries in as fast as one hour",
+                    "Get your groceries in as fast as one hour",
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -65,12 +65,13 @@ class WelcomeScreen extends StatelessWidget {
                     bgColor: AppColors.primaryColor,
                     text: "Get Started",
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => SigninScreen()),
-                      );
-                    },
-                  ),
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (_) => SigninScreen()),
+                      //   );
+                      // },
+                      Get.offAll(()=> SigninScreen());
+                    } ),
                   // SizedBox(
                   //   height: 67.h,
                   //   width: 353.w,

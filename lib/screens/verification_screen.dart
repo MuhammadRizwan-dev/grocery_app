@@ -1,11 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/apptextfield.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/location_screen.dart';
 
-class VerificationScreen extends StatelessWidget {
-  const VerificationScreen({super.key});
+class VerificationScreen extends StatefulWidget {
+  final String verificationId;
+  const VerificationScreen({super.key, required this.verificationId});
+
+  @override
+  State<VerificationScreen> createState() => _VerificationScreenState();
+}
+
+class _VerificationScreenState extends State<VerificationScreen> {
+  final TextEditingController otpController = TextEditingController();
+  void verifyOTP() async {
+    if (otpController.text.length < 6) {
+      Utils.showSnackBar("Enter valid OTP");
+      return;
+    }
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: otpController.text.trim(),
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+     Get.to(()=> LocationScreen());
+    } catch (e) {Utils.showSnackBar("OTP Verification Failed");}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +60,7 @@ class VerificationScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text(
-                        "4 digit code will be sent to Your Number within 10 sec Please Wait!",
+                        "6 digit code will be sent to Your Number within 10 sec Please Wait!",
                       ),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(milliseconds: 2000),
@@ -58,14 +82,9 @@ class VerificationScreen extends StatelessWidget {
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LocationScreen(),
-                  ),
-                );
+                verifyOTP();
               },
-              child: Icon(Icons.arrow_forward, color: AppColors.whiteColor),
+              child: Icon(Icons.arrow_forward_ios, color: AppColors.whiteColor),
             ),
           ],
         ),
@@ -78,25 +97,19 @@ class VerificationScreen extends StatelessWidget {
             right: 0,
             height: 0.45.sh,
             child: Container(
-              decoration: BoxDecoration(
-                gradient: AppGradients.whiteToPink,
-              ),
+              decoration: BoxDecoration(gradient: AppGradients.whiteToPink),
             ),
           ),
           SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              // Removed height: 1.sh  ← this was the main cause of unbounded issues
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-                vertical: 100.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 40.h),
                   Text(
-                    "Enter your 4-digit code",
+                    "Enter your 6-digit code",
                     style: TextStyle(
                       fontFamily: "Gilroy",
                       fontWeight: FontWeight.w600,
@@ -114,9 +127,8 @@ class VerificationScreen extends StatelessWidget {
                       fontSize: 16.sp,
                     ),
                   ),
-                  SizedBox(height: 5.h),
-                  Apptextfield(hint: "- - - -"),
-                  SizedBox(height: 120.h), // increased a bit so content doesn't hide under FAB
+                  Apptextfield(hint: "- - - - - -",controller: otpController,),
+                  SizedBox(height: 120.h),
                 ],
               ),
             ),
