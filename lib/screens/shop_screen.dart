@@ -1,9 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
+import 'package:grocery_app/controllers/cart_controller.dart';
+import 'package:grocery_app/controllers/favourite_controller.dart';
 import 'package:grocery_app/screens/productDetails_screen.dart';
+import 'package:shimmer/shimmer.dart';
+import '../controllers/user_product_controller.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -13,6 +19,11 @@ class ShopScreen extends StatefulWidget {
 }
 
 class _ShopScreenState extends State<ShopScreen> {
+  final UserProductController productController = Get.put(
+    UserProductController(),
+  );
+  final CartController cartController = Get.put(CartController());
+  final FavouriteController favouriteController = Get.put(FavouriteController());
   final List<String> banners = [
     "assets/bannerPic.png",
     "assets/bannerPic.png",
@@ -78,14 +89,10 @@ class _ShopScreenState extends State<ShopScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Logo
               Center(
                 child: SvgPicture.asset("assets/redCarrot.svg", height: 35.h),
               ),
-
               SizedBox(height: 12.h),
-
-              // Location row
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -100,8 +107,6 @@ class _ShopScreenState extends State<ShopScreen> {
                   ),
                 ],
               ),
-
-              // Search bar
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 child: SizedBox(
@@ -124,8 +129,6 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
 
               SizedBox(height: 10.h),
-
-              // Banner carousel
               CarouselSlider.builder(
                 itemCount: banners.length,
                 itemBuilder: (context, index, _) {
@@ -176,111 +179,221 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
 
               SizedBox(height: 10.h),
-              SizedBox(
-                height: 214.h,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ProductDetailScreen(product: item),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 165.w,
-                        margin: EdgeInsets.only(right: 16.w),
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18.r),
-                          border: Border.all(color: AppColors.verylightgrey),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Image.asset(item["image"], height: 78.h),
-                            ),
-                            SizedBox(height: 14.h),
-                            Flexible(
-                              child: Text(
-                                item["name"],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 2.h),
-                            Flexible(
-                              child: Text(
-                                item["detail"],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Color(0xFF7C7C7C),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "\$${item["price"]}",
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "${item["name"]} added to Cart",
-                                        ),
-                                        backgroundColor: Colors.grey,
-                                        duration: Duration(milliseconds: 1000),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 40.h,
-                                    width: 40.w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                      size: 20.sp,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+              SizedBox(height: 10.h),
+              Obx(() {
+                final List<Map<String, dynamic>> combinedItems = [
+                  ...items,
+                  ...productController.firebaseProducts.map((p) {
+                    String fastUrl = p.imageUrl!.replaceFirst(
+                      '/upload/',
+                      '/upload/w_300,h_300,c_fill,q_auto,f_auto/',
                     );
-                  },
-                ),
-              ),
+                    return {
+                      "name": p.name,
+                      "detail": p.details,
+                      "price": p.price.toString(),
+                      "image": fastUrl,
+                      "isNetwork": true,
+                    };
+                  }),
+                ];
+
+                return SizedBox(
+                  height: 214.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    itemCount: combinedItems.length,
+                    itemBuilder: (context, index) {
+                      final item = combinedItems[index];
+                      return buildProductCard(item);
+                      // return GestureDetector(
+                      //   onTap: () {
+                      //     Get.to(() => ProductDetailScreen(product: item));
+                      //   },
+                      //   child: Container(
+                      //     width: 165.w,
+                      //     margin: EdgeInsets.only(right: 16.w),
+                      //     padding: EdgeInsets.all(12.w),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       borderRadius: BorderRadius.circular(18.r),
+                      //       border: Border.all(color: AppColors.verylightgrey),
+                      //     ),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Center(
+                      //           child: item["isNetwork"] == true
+                      //               ? Image.network(
+                      //             item["image"],
+                      //             height: 78.h,
+                      //             fit: BoxFit.contain,
+                      //             errorBuilder: (c, e, s) => Icon(Icons.broken_image),
+                      //           )
+                      //               : Image.asset(item["image"], height: 78.h),
+                      //         ),
+                      //         SizedBox(height: 14.h),
+                      //         Flexible(
+                      //           child: Text(
+                      //             item["name"],
+                      //             overflow: TextOverflow.ellipsis,
+                      //             maxLines: 1,
+                      //             style: TextStyle(
+                      //               fontSize: 16.sp,
+                      //               fontWeight: FontWeight.w600,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         SizedBox(height: 2.h),
+                      //         Flexible(
+                      //           child: Text(
+                      //             item["detail"],
+                      //             overflow: TextOverflow.ellipsis,
+                      //             maxLines: 1,
+                      //             style: TextStyle(
+                      //               fontSize: 14.sp,
+                      //               color: Color(0xFF7C7C7C),
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Spacer(),
+                      //         Row(
+                      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //           children: [
+                      //             Text(
+                      //               "\$${item["price"]}",
+                      //               style: TextStyle(
+                      //                 fontSize: 16.sp,
+                      //                 color: Colors.green,
+                      //                 fontWeight: FontWeight.bold,
+                      //               ),
+                      //             ),
+                      //             Container(
+                      //               height: 40.h,
+                      //               width: 40.w,
+                      //               decoration: BoxDecoration(
+                      //                 color: AppColors.primaryColor,
+                      //                 borderRadius: BorderRadius.circular(12.r),
+                      //               ),
+                      //               child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                  ),
+                );
+              }),
+              // SizedBox(
+              //   height: 214.h,
+              //   child: ListView.builder(
+              //     scrollDirection: Axis.horizontal,
+              //     padding: EdgeInsets.symmetric(horizontal: 10.w),
+              //     itemCount: items.length,
+              //     itemBuilder: (context, index) {
+              //       final item = items[index];
+              //       return GestureDetector(
+              //         onTap: () {
+              //           Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //               builder: (_) => ProductDetailScreen(product: item),
+              //             ),
+              //           );
+              //         },
+              //         child: Container(
+              //           width: 165.w,
+              //           margin: EdgeInsets.only(right: 16.w),
+              //           padding: EdgeInsets.all(12.w),
+              //           decoration: BoxDecoration(
+              //             color: Colors.white,
+              //             borderRadius: BorderRadius.circular(18.r),
+              //             border: Border.all(color: AppColors.verylightgrey),
+              //           ),
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Center(
+              //                 child: Image.asset(item["image"], height: 78.h),
+              //               ),
+              //               SizedBox(height: 14.h),
+              //               Flexible(
+              //                 child: Text(
+              //                   item["name"],
+              //                   overflow: TextOverflow.ellipsis,
+              //                   maxLines: 1,
+              //                   textAlign: TextAlign.center,
+              //                   style: TextStyle(
+              //                     fontSize: 16.sp,
+              //                     fontWeight: FontWeight.w600,
+              //                   ),
+              //                 ),
+              //               ),
+              //               SizedBox(height: 2.h),
+              //               Flexible(
+              //                 child: Text(
+              //                   item["detail"],
+              //                   overflow: TextOverflow.ellipsis,
+              //                   maxLines: 1,
+              //                   style: TextStyle(
+              //                     fontSize: 14.sp,
+              //                     color: Color(0xFF7C7C7C),
+              //                     fontWeight: FontWeight.bold,
+              //                   ),
+              //                 ),
+              //               ),
+              //               Spacer(),
+              //               Row(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                 children: [
+              //                   Text(
+              //                     "\$${item["price"]}",
+              //                     style: TextStyle(
+              //                       fontSize: 16.sp,
+              //                       color: Colors.green,
+              //                       fontWeight: FontWeight.bold,
+              //                     ),
+              //                   ),
+              //                   GestureDetector(
+              //                     onTap: () {
+              //                       ScaffoldMessenger.of(context).showSnackBar(
+              //                         SnackBar(
+              //                           content: Text(
+              //                             "${item["name"]} added to Cart",
+              //                           ),
+              //                           backgroundColor: Colors.grey,
+              //                           duration: Duration(milliseconds: 1000),
+              //                         ),
+              //                       );
+              //                     },
+              //                     child: Container(
+              //                       height: 40.h,
+              //                       width: 40.w,
+              //                       decoration: BoxDecoration(
+              //                         color: AppColors.primaryColor,
+              //                         borderRadius: BorderRadius.circular(12.r),
+              //                       ),
+              //                       child: Icon(
+              //                         Icons.add,
+              //                         color: Colors.white,
+              //                         size: 20.sp,
+              //                       ),
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -308,109 +421,201 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
               SizedBox(height: 10.h),
               SizedBox(
-                height: 200.h,
+                height: 214.h,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   itemCount: otherItems.length,
                   itemBuilder: (context, index) {
                     final item = otherItems[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ProductDetailScreen(product: item),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 165.w,
-                        margin: EdgeInsets.only(right: 12.w),
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(color: Colors.grey.shade400),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Image.asset(item["image"], height: 80.h),
-                            ),
-                            SizedBox(height: 10.h),
-                            Flexible(
-                              child: Text(
-                                item["name"],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                item["detail"],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "\$${item["price"]}",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "${item["name"]} added to Cart",
-                                        ),
-                                        duration: Duration(milliseconds: 1000),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 40.h,
-                                    width: 40.w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                      size: 20.sp,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                    return buildProductCard(item);
+                    // return GestureDetector(
+                    //   onTap: () {
+                    //     Get.to(() => ProductDetailScreen(product: item));
+                    //     // Navigator.push(
+                    //     //   context,
+                    //     //   MaterialPageRoute(
+                    //     //     builder: (_) => ProductDetailScreen(product: item),
+                    //     //   ),
+                    //     // );
+                    //   },
+                    //   child: Container(
+                    //     width: 165.w,
+                    //     margin: EdgeInsets.only(right: 12.w),
+                    //     padding: EdgeInsets.all(10.w),
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.circular(16.r),
+                    //       border: Border.all(color: Colors.grey.shade400),
+                    //     ),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Center(
+                    //           child: Image.asset(item["image"], height: 80.h),
+                    //         ),
+                    //         SizedBox(height: 10.h),
+                    //         Flexible(
+                    //           child: Text(
+                    //             item["name"],
+                    //             overflow: TextOverflow.ellipsis,
+                    //             maxLines: 1,
+                    //             style: TextStyle(
+                    //               fontSize: 14.sp,
+                    //               fontWeight: FontWeight.w600,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         Flexible(
+                    //           child: Text(
+                    //             item["detail"],
+                    //             overflow: TextOverflow.ellipsis,
+                    //             maxLines: 1,
+                    //             style: TextStyle(
+                    //               fontSize: 12.sp,
+                    //               color: Colors.grey,
+                    //               fontWeight: FontWeight.bold,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         Spacer(),
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text(
+                    //               "\$${item["price"]}",
+                    //               style: TextStyle(
+                    //                 fontSize: 14.sp,
+                    //                 color: Colors.green,
+                    //                 fontWeight: FontWeight.bold,
+                    //               ),
+                    //             ),
+                    //             GestureDetector(
+                    //               onTap: () {
+                    //                 ScaffoldMessenger.of(context).showSnackBar(
+                    //                   SnackBar(
+                    //                     content: Text(
+                    //                       "${item["name"]} added to Cart",
+                    //                     ),
+                    //                     duration: Duration(milliseconds: 1000),
+                    //                   ),
+                    //                 );
+                    //               },
+                    //               child: Container(
+                    //                 height: 40.h,
+                    //                 width: 40.w,
+                    //                 decoration: BoxDecoration(
+                    //                   color: AppColors.primaryColor,
+                    //                   borderRadius: BorderRadius.circular(12.r),
+                    //                 ),
+                    //                 child: Icon(
+                    //                   Icons.add,
+                    //                   color: Colors.white,
+                    //                   size: 20.sp,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // );
                   },
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildProductCard(Map<String, dynamic> item) {
+    return GestureDetector(
+      onTap: () => Get.to(() => ProductDetailScreen(product: item)),
+      child: Container(
+        width: 165.w,
+        margin: EdgeInsets.only(right: 16.w),
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(color: AppColors.verylightgrey),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: item["isNetwork"] == true
+                  ? CachedNetworkImage(
+                      imageUrl: item["image"],
+                      height: 76.h,memCacheHeight: 200,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey[200]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          height: 76.h,
+                          width: double.infinity,
+                          color: Colors.white,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.broken_image,
+                        size: 40.h,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : Image.asset(
+                      item["image"],
+                      height: 78.h,
+                      fit: BoxFit.contain,
+                    ),
+            ),
+            SizedBox(height: 14.h),
+            Flexible(
+              child: Text(
+                item["name"],
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Text(
+              item["detail"],
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF7C7C7C)),
+            ),
+            const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "\$${item["price"]}",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    cartController.addToCart(item);
+                    Utils.showSnackBar("${item["name"]} added to Cart");
+                  },
+                  child: Container(
+                    height: 35.h,
+                    width: 35.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(Icons.add, color: Colors.white, size: 18.sp),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

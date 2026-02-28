@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/filteredProducts_screen.dart';
-import 'package:grocery_app/screens/subProducts_screen.dart';
 
 class SelectfilterScreen extends StatefulWidget {
   const SelectfilterScreen({super.key});
@@ -38,10 +38,11 @@ class _SelectfilterScreenState extends State<SelectfilterScreen> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => SubproductsScreen()),
-            );
+            Get.back();
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (_) => SubproductsScreen()),
+            // );
           },
         ),
         title: Text(
@@ -65,8 +66,8 @@ class _SelectfilterScreenState extends State<SelectfilterScreen> {
               decoration: BoxDecoration(
                 color: AppColors.verylightgrey,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(30.r),
+                  topRight: Radius.circular(30.r),
                 ),
               ),
               child: SingleChildScrollView(
@@ -155,19 +156,20 @@ class _SelectfilterScreenState extends State<SelectfilterScreen> {
                       }),
                     ),SizedBox(height: 80.h,),
                     AppButtons.socialButton(
-                      text: "Apply Fiter",bgColor: AppColors.primaryColor,
+                      text: "Apply Filter",bgColor: AppColors.primaryColor,
                       onPressed: () {
                         final _appliedText = selectedCategory ?? selectedBrand;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return FilteredproductsScreen(
-                                appliedText: _appliedText ?? "",
-                              );
-                            },
-                          ),
-                        );
+                         Get.off(() => FilteredproductsScreen(appliedText: _appliedText ?? ""));
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) {
+                        //       return FilteredproductsScreen(
+                        //         appliedText: _appliedText ?? "",
+                        //       );
+                        //     },
+                        //   ),
+                        // );
                       },
                     ),
                   ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/apptextfield.dart';
 import 'package:grocery_app/screens/logIn_screen.dart';
 
@@ -86,7 +87,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   hint: "Select your city/zone",
                   suffixIcon: IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.keyboard_arrow_down_rounded, size: 20.sp),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded, size: 24.sp),
                   ),
                   fontSize: 15.sp,
                 ),
@@ -107,16 +108,14 @@ class _LocationScreenState extends State<LocationScreen> {
                   fontSize: 15.sp,
                   suffixIcon: IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.keyboard_arrow_down_rounded, size: 15.sp),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded, size: 24.sp),
                   ),
                 ),
 
                 SizedBox(height: 30.h),
                 AppButtons.socialButton(
                   text: "Submit",
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context){return LoginScreen();}));
-                  },
+                  onPressed:()=> Get.to(()=> LoginScreen()),
                   bgColor: AppColors.primaryColor,
                 ),
                 SizedBox(height: 40.h),

@@ -57,8 +57,6 @@ class _FilteredproductsScreenState extends State<FilteredproductsScreen> {
   late List<Map<String, String>> filteredItems;
   TextEditingController searchController = TextEditingController();
   @override
-  @override
-  @override
   void initState() {
     super.initState();
     searchController.text = widget.appliedText;

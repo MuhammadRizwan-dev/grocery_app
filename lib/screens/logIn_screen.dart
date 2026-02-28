@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:grocery_app/root/app_root.dart';
 import 'package:grocery_app/screens/signUp_screen.dart';
-
 import '../components/apptextfield.dart';
 import '../components/utils.dart';
 
@@ -15,6 +18,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordHidden = true;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   SizedBox(height: 70.h),
                   Center(
-
-                    child: SvgPicture.asset("assets/redCarrot.svg", height: 50.h),
+                    child: SvgPicture.asset(
+                      "assets/redCarrot.svg",
+                      height: 50.h,
+                    ),
                   ),
                   SizedBox(height: 20.h),
                 ],
@@ -44,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   SizedBox(height: 30.h),
                   Text(
-                    "Loging",
+                    "LogIn",
                     style: TextStyle(
                       fontFamily: "Gilroy",
                       fontWeight: FontWeight.w600,
@@ -63,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Apptextfield(
                     label: "Email",
+                    controller: emailController,
                     labelStyle: TextStyle(
                       fontFamily: "Gilroy",
                       color: AppColors.lightGrey,
@@ -73,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 20.h),
                   Apptextfield(
                     label: "Password",
+                    controller: passwordController,
                     isPassword: _isPasswordHidden,
                     suffixIcon: IconButton(
                       onPressed: () {
@@ -113,7 +122,58 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 10.h),
                   AppButtons.socialButton(
                     text: "Log In",
-                    onPressed: () {},
+                    onPressed: () async {
+                      final email = emailController.text.trim();
+                      final password = passwordController.text.trim();
+                      if (email.isEmpty || password.isEmpty) {
+                        Utils.showSnackBar("Email & Password is required");
+                        return;
+                      }
+                      try {
+                        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          email: email,
+                          password: password,
+                        );
+                        DocumentSnapshot userDoc =await FirebaseFirestore.instance.collection("users").doc(userCredential.user!.uid).get();
+                        if (userDoc.exists) {
+                          final data = userDoc.data() as Map<String, dynamic>?;
+                          String status = data?['status'] ?? "active";
+
+                          if (status == "blocked") {
+                            await FirebaseAuth.instance.signOut();
+                            Utils.showSnackBar("Your account is permanently banned by Admin.", color: Colors.red);
+                            return;
+                          }
+
+                          if (status == "stopped") {
+                            await FirebaseAuth.instance.signOut();
+                            Utils.showSnackBar("Your account is temporarily suspended.", color: Colors.orange);
+                            return;
+                          }
+                        }
+                        Get.offAll(() => AppRoot());
+                      //  await userCredential.user!.reload();
+                      //  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        //  email: email,
+                          //password: password,
+                       // );
+                      //  Get.offAll(()=> AppRoot());
+                      }on FirebaseAuthException catch (e) {
+                        switch (e.code) {
+                          case 'user-not-found':
+                            Utils.showSnackBar("No account found with this email");
+                            break;
+                          case 'wrong-password':
+                            Utils.showSnackBar("Incorrect password");
+                            break;
+                          case 'invalid-email':
+                            Utils.showSnackBar("Invalid email address");
+                            break;
+                          default:
+                            Utils.showSnackBar("Login failed, try again");
+                        }
+                      }
+                    },
                     bgColor: AppColors.primaryColor,
                   ),
                   SizedBox(height: 7.h),
@@ -126,22 +186,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontFamily: "Gilroy",
                           color: AppColors.lightGrey,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w600,
                           fontSize: 12.sp,
                         ),
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => SignupScreen()),
-                          );
+                         Get.to(()=> SignupScreen());
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(builder: (_) => SignupScreen()),
+                          // );
                         },
                         child: Text(
-                          " Singup",
+                          " SingUp",
                           style: TextStyle(
                             fontFamily: "Gilroy",
                             color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w600,
                             fontSize: 12.sp,
                           ),
                         ),

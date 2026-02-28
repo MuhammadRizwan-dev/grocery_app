@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/verification_screen.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
-class NumberScreen extends StatelessWidget {
+class NumberScreen extends StatefulWidget {
   const NumberScreen({super.key});
 
+  @override
+  State<NumberScreen> createState() => _NumberScreenState();
+}
+
+class _NumberScreenState extends State<NumberScreen> {
+  String fullNumber = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,23 +34,29 @@ class NumberScreen extends StatelessWidget {
         backgroundColor: AppColors.primaryColor,
         shape: const CircleBorder(),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const VerificationScreen(),
-            ),
+          if (fullNumber.isEmpty) {
+            Utils.showSnackBar("Enter phone number");
+            return;
+          }
+
+          Utils.sendOTP(
+            context: context,
+            phoneNumber: fullNumber,
+            onCodeSent: (verificationId) {
+              Get.to(
+                    () => VerificationScreen(
+                  verificationId: verificationId,
+                ),
+              );
+            },
           );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                "4 digit code will be sent to Your Number within 10 sec Please Wait!",
-              ),
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(milliseconds: 2000),
-            ),
+
+          Utils.showSnackBar(
+            "6 digit code will be sent to your number",
           );
         },
-        child: Icon(Icons.arrow_forward, color: AppColors.whiteColor),
+
+        child: Icon(Icons.arrow_forward_ios_outlined, color: AppColors.whiteColor),
       ),
       body: Stack(
         children: [
@@ -61,7 +74,6 @@ class NumberScreen extends StatelessWidget {
           SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              // height: 1.sh  ← REMOVE THIS LINE (this was causing conflict)
               color: Colors.transparent,
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 100.h),
               child: Column(
@@ -87,9 +99,9 @@ class NumberScreen extends StatelessWidget {
                       fontSize: 16.sp,
                     ),
                   ),
-                  IntlPhoneField(
+                  IntlPhoneField(showCursor: true,
                     initialCountryCode: "BD",
-                    showDropdownIcon: false,
+                    showDropdownIcon: true,
                     keyboardType: TextInputType.phone,
                     disableLengthCheck: true,
                     decoration: const InputDecoration(
@@ -99,11 +111,12 @@ class NumberScreen extends StatelessWidget {
                       ),
                     ),
                     onChanged: (phone) {
+                    fullNumber = phone.completeNumber;
                       print("Complete Number is ${phone.completeNumber}");
                     },
                   ),
-                  SizedBox(height: 100.h), // already there, good for spacing
-                  SizedBox(height: 80.h),   // ← extra bottom space so FAB doesn't cover content
+                  SizedBox(height: 100.h),
+                  SizedBox(height: 80.h),
                 ],
               ),
             ),

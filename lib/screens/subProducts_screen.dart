@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/screens/selectFilter_screen.dart';
 import '../components/utils.dart';
+import '../controllers/cart_controller.dart';
 
 class SubproductsScreen extends StatefulWidget {
   const SubproductsScreen({super.key});
@@ -13,6 +14,7 @@ class SubproductsScreen extends StatefulWidget {
 }
 
 class _SubproductsScreenState extends State<SubproductsScreen> {
+  final CartController cartController = Get.find<CartController>();
   final List<Map<String, dynamic>> subItems = [
     {
       "name": "Diet Coke",
@@ -60,7 +62,7 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
@@ -73,7 +75,7 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.back();
+              Get.to(() => SelectfilterScreen());
             },
             icon: SvgPicture.asset(
               "assets/settingIcon.svg",
@@ -144,25 +146,24 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("${item["name"]} added to Cart"),
-                            duration: const Duration(milliseconds: 800),
-                          ),
-                        );
+                        cartController.addToCart({
+                          "name": item["name"],
+                          "detail": item["details"],
+                          "price": item["price"],
+                          "image": item["image"],
+                          "qty": 1,
+                          "isNetwork": false,
+                        });
+                        Utils.showSnackBar("${item["name"]} added to Cart");
                       },
                       child: Container(
-                        height: 36.h,
-                        width: 36.w,
+                        height: 35.h,
+                        width: 35.w,
                         decoration: BoxDecoration(
                           color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 18.sp,
-                        ),
+                        child: Icon(Icons.add, color: Colors.white, size: 18.sp),
                       ),
                     ),
                   ],

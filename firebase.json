@@ -1,0 +1,37 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "grocery-app-39048",
+          "appId": "1:330946807876:android:2b7c957ac8a622ae931411",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "grocery-app-39048",
+          "configurations": {
+            "android": "1:330946807876:android:2b7c957ac8a622ae931411",
+            "web": "1:330946807876:web:e1058bc0366b6eb0931411",
+            "windows": "1:330946807876:web:043db4db0900838b931411"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

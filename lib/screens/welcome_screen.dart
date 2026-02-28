@@ -65,11 +65,6 @@ class WelcomeScreen extends StatelessWidget {
                     bgColor: AppColors.primaryColor,
                     text: "Get Started",
                     onPressed: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(builder: (_) => SigninScreen()),
-                      //   );
-                      // },
                       Get.offAll(()=> SigninScreen());
                     } ),
                   // SizedBox(

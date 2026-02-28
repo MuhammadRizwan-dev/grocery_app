@@ -7,7 +7,6 @@ class UserProductController extends GetxController {
   var firebaseProducts = <ProductModel>[].obs;
 
   var isLoading = true.obs;
-
   @override
   void onInit() {
     super.onInit();

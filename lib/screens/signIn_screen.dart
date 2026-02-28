@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/number_screen.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+
+import '../root/app_root.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -18,7 +23,8 @@ class _SigninScreenState extends State<SigninScreen> {
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: 0.5.sh,
@@ -31,7 +37,7 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
               SizedBox(height: 5.h),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
                   "Get your groceries",
                   textAlign: TextAlign.start,
@@ -44,7 +50,7 @@ class _SigninScreenState extends State<SigninScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
                   "with nectar",
                   textAlign: TextAlign.center,
@@ -58,20 +64,15 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return NumberScreen();
-                      },
-                    ),
-                  );
+                  Get.to(() => NumberScreen());
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: AbsorbPointer(
                     child: IntlPhoneField(
-                      initialCountryCode: "BD",showDropdownIcon: false,disableLengthCheck: true,
+                      initialCountryCode: "BD",
+                      showDropdownIcon: false,
+                      disableLengthCheck: true,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                         enabledBorder: UnderlineInputBorder(
@@ -85,8 +86,9 @@ class _SigninScreenState extends State<SigninScreen> {
                   ),
                 ),
               ),
-             SizedBox(height: 10.h,),
-              Row(mainAxisAlignment: MainAxisAlignment.center,
+              SizedBox(height: 10.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "or connect with social media",
@@ -103,11 +105,34 @@ class _SigninScreenState extends State<SigninScreen> {
               ),
               SizedBox(height: 25.h),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: AppButtons.socialButton(
                   text: "Continue with Google",
-                  icon: Icons.g_mobiledata,
-                  onPressed: () {},
+                  icon: SvgPicture.asset(
+                    "assets/google.svg",
+                    width: 22.sp,
+                    height: 22.sp,
+                  ),
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) =>
+                          Center(child: CircularProgressIndicator()),
+                    );
+                    final user = await Utils.signInWithGoogle();
+                    Get.back();
+                    if (user != null) {
+                      Utils.showSnackBar(
+                        color: AppColors.lightGrey,
+                        "Logged in as ${user.user!.displayName}",
+                      );
+                      Get.offAll(() => AppRoot());
+                    }
+                    if (user == null) {
+                      Utils.showSnackBar("Login Cancelled");
+                    }
+                  },
                 ),
               ),
 
@@ -176,11 +201,35 @@ class _SigninScreenState extends State<SigninScreen> {
               //   ),
               // ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: AppButtons.socialButton(
                   text: "Continue with Facebook",
-                  icon: Icons.facebook,
-                  onPressed: () {},
+                  icon: SvgPicture.asset(
+                    "assets/facebookIcon.svg",
+                    width: 22.sp,
+                    height: 22.sp,
+                  ),
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) =>
+                          Center(child: CircularProgressIndicator()),
+                    );
+                    await FacebookAuth.instance.logOut();
+                    final user = await Utils.signInWithFacebook();
+                       Get.back();
+                    if (user != null) {
+                      Utils.showSnackBar(
+                        "Logged in as ${user.user!.displayName}",
+                        color: Colors.green,
+                      );
+                      Get.offAll(() => AppRoot());
+                    }
+                    if (user == null) {
+                      Utils.showSnackBar("Login Cancelled");
+                    }
+                  },
                 ),
               ),
             ],

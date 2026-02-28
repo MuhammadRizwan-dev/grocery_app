@@ -1,42 +1,111 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grocery_app/root/app_root.dart';
+import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import '../main.dart';
-
 class Utils {
   Utils._();
-  // static Future<UserCredential?> signInWithFacebook() async {
-  //   try {
-  //     final LoginResult result = await FacebookAuth.instance.login(
-  //       permissions: ['email', 'public_profile'],
-  //     );
-  //     if (result.status != LoginStatus.success) return null;
-  //     final credential = FacebookAuthProvider.credential(
-  //       result.accessToken!.tokenString,
-  //     );
-  //     return await FirebaseAuth.instance.signInWithCredential(credential);
-  //   } catch (e) {
-  //     Utils.showSnackBar("LogIn Failed :$e");
-  //     print("$e");
-  //     return null;
-  //   }
-  // }
-  // static Future<void> signOut() async {
-  //   await FirebaseAuth.instance.signOut();
-  //   final GoogleSignIn googleSignIn = GoogleSignIn();
-  //   if (await googleSignIn.isSignedIn()) {
-  //     await googleSignIn.disconnect();
-  //     Get.offAll(() => LoginScreen());
-  //     showSnackBar("SignOut SuccessFully",color: Colors.green);
-  //   }
-  //
-  //   await GoogleSignIn().signOut();
-  //}
+  static Future<UserCredential?> signInWithFacebook() async {
+    try {
+      await FacebookAuth.instance.logOut();
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],loginBehavior: LoginBehavior.webOnly,
+      );
+      String? fbEmail;
+      if (result.status == LoginStatus.success) {
+        final userData = await FacebookAuth.instance.getUserData();
+         fbEmail = userData['email'];
+        print("FB User Data: $userData");
+      }
+      if (result.status != LoginStatus.success) return null;
+      final credential = FacebookAuthProvider.credential(
+        result.accessToken!.tokenString,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        await saveUserToFirestore(userCredential.user!, emailFromSocial: fbEmail);
+      }
+      return userCredential;
+    } catch (e) {
+      Utils.showSnackBar("LogIn Failed :$e");
+      print("$e");
+      return null;
+    }
+  }
+
+  static Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId:
+            "330946807876-p3174pnvc5ruhmhgjfh7evuke45fjtnh.apps.googleusercontent.com",
+        scopes: ['email'],
+      );
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) return null;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      if (userCredential.user != null) {
+        await saveUserToFirestore(userCredential.user!,emailFromSocial: googleUser.email);
+      }
+      return userCredential;
+    } catch (e) {
+      print("Google SignIn Error: $e");
+      showSnackBar("Google Sign-In failed");
+      return null;
+    }
+  }
+
+  static Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.disconnect();
+      }
+      await googleSignIn.signOut();
+
+      await FacebookAuth.instance.logOut();
+      Get.offAll(() => const WelcomeScreen());
+      showSnackBar("SignOut Successfully", color: Colors.green);
+    } catch (e) {
+      print("Logout Error: $e");
+      showSnackBar("Error signing out");
+    }
+  }
+
+  static Future<void> saveUserToFirestore(User user, {String? emailFromSocial}) async {
+    String finalEmail = emailFromSocial ?? user.email ?? "No Email";
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'uid': user.uid,
+      'email': finalEmail,
+      'displayName': user.displayName ?? "User",
+      'photoUrl': user.photoURL ?? "",
+      'lastLogin': FieldValue.serverTimestamp(),
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   static void sendOTP({
     required BuildContext context,
     required String phoneNumber,
@@ -55,30 +124,6 @@ class Utils {
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
-  }
-
-  static Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
-
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) return null;
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-        accessToken: googleAuth.accessToken,
-      );
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      print("Google SignIn Error: $e");
-      showSnackBar("Google Sign-In failed");
-      return null;
-    }
   }
 
   static void showSnackBar(String message, {Color? color}) {
@@ -169,7 +214,7 @@ class Utils {
                 SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(24.w, 40.h, 24.w, 24.h),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
@@ -207,6 +252,9 @@ class Utils {
                         bgColor: AppColors.primaryColor,
                       ),
                       TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: Size(double.infinity, 40.h),
+                        ),
                         onPressed: () {
                           Get.offAll(() => const AppRoot());
                         },
@@ -228,7 +276,7 @@ class Utils {
                   left: 8.w,
                   child: IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                     icon: const Icon(Icons.close),
                   ),
@@ -250,6 +298,24 @@ class Utils {
     return null;
   }
 }
+
+// class SearchHelper {
+//   static List<Map<String, String>> performSearch({
+//     required String query,
+//     required List<Map<String, String>> originalList,
+//     required String searchKey,
+//   }) {
+//     if (query.isEmpty) {
+//       return List.from(originalList);
+//     }
+//     return originalList
+//         .where(
+//           (item) =>
+//               item[searchKey]!.toLowerCase().contains(query.toLowerCase()),
+//         )
+//         .toList();
+//   }
+// }
 
 class AppColors {
   AppColors._();
@@ -309,7 +375,6 @@ class AppButtons {
     );
   }
 }
-
 
 class AppGradients {
   AppGradients._();

@@ -3,11 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
-import 'package:grocery_app/data/favourite_data.dart';
+import 'package:grocery_app/controllers/cart_controller.dart';
+import 'package:grocery_app/controllers/favourite_controller.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  final Map<String , dynamic> product;
-  const ProductDetailScreen({super.key, required this.product});
+  final Map<String, dynamic> product;
+  final CartController cartController = Get.find();
+  final FavouriteController favouriteController = Get.find();
+  ProductDetailScreen({super.key, required this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -16,13 +19,20 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int quantity = 1;
   bool _isFavourite = false;
+  @override
+  void initState() {
+    super.initState();
+    _isFavourite = widget.favouriteController.isFavourite(
+      widget.product["name"],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor:Color(0xFFF2F3F2),
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black87),
@@ -43,10 +53,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Container(
               height: 280.h,
               width: double.infinity,
-              color: Colors.white,
-              padding: EdgeInsets.all(20.w),
-              child: Image.asset('assets/APPLE.png', fit: BoxFit.contain),
+              decoration: BoxDecoration(
+                color: Color(0xFFF2F3F2),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(25.r)),
+              ),
+              child: Center(
+                child: (widget.product["image"] == null)
+                    ? Icon(Icons.broken_image, size: 100.h)
+                    : widget.product["isNetwork"] == true
+                    ? Image.network(
+                  widget.product["image"],
+                  height: 200.h,
+                  width: 250.w,
+                  fit: BoxFit.contain,
+                )
+                    : Image.asset(
+                  widget.product["image"],
+                  height: 200.h,
+                  width: 250.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
+            // Container(
+            //   height: 280.h,
+            //   width: double.infinity,
+            //   color: Colors.white,
+            //   padding: EdgeInsets.all(20.w),
+            //   child: (widget.product["image"] == null)
+            //       ? Icon(Icons.broken_image, size: 100.h)
+            //       : widget.product["isNetwork"] == true
+            //       ? Image.network(widget.product["image"], height: 200.h)
+            //       : Image.asset(widget.product["image"], height: 200.h),
+            // ),
 
             SizedBox(height: 10.h),
             Padding(
@@ -58,7 +97,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Natural Red Apple",
+                        widget.product["name"] ?? "No Name",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: "Gilroy",
@@ -71,7 +110,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           setState(() {
                             _isFavourite = !_isFavourite;
                           });
-                          toggleFavorite(widget.product);
+                          widget.favouriteController.toggleFavourite(
+                            widget.product,
+                          );
                         },
                         icon: _isFavourite
                             ? Icon(
@@ -84,7 +125,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    "1kg, Price",
+                    widget.product["details"] ?? "No Details available",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: "Gilroy",
@@ -101,7 +142,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.remove,size: 30.sp,),
+                            icon: Icon(Icons.remove, size: 30.sp),
                             color: AppColors.lightGrey,
                             onPressed: () {
                               if (quantity > 1) setState(() => quantity--);
@@ -121,14 +162,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.add,size: 30.sp,),
+                            icon: Icon(Icons.add, size: 30.sp),
                             color: AppColors.primaryColor,
                             onPressed: () => setState(() => quantity++),
                           ),
                         ],
                       ),
                       Text(
-                        "\$4.99",
+                        "\$${widget.product["price"].toString()}",
                         style: TextStyle(
                           fontSize: 26.sp,
                           fontWeight: FontWeight.bold,
@@ -136,9 +177,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20,),
-                  Divider(height: 10.h,thickness: 1,),
-                  SizedBox(height: 20.h,),
+                  SizedBox(height: 20),
+                  Divider(height: 10.h, thickness: 1),
+                  SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -154,10 +195,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    "Apples are nutritious. Apples may be good for weight loss. "
-                    "Apples may be good for your heart. As part of a healthy and varied diet.",
+                    "${widget.product["name"]} are nutritious.${widget.product["name"]} may be good for weight loss. "
+                    "${widget.product["name"]} may be good for your heart. As part of a healthy and varied diet.",
                     style: TextStyle(
-                      fontSize: 15.sp,fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.lightGrey,
                       height: 1.4,
                     ),
@@ -167,10 +209,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Nutritions", style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                      ),),
+                      Text(
+                        "Nutritions",
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       Row(
                         children: [
                           Text("100g", style: TextStyle(color: Colors.grey)),
@@ -189,16 +234,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Review", style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                      ),),
+                      Text(
+                        "Review",
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       Row(
                         children: [
-                          Text("★★★★★",  style: TextStyle(
-                            fontSize: 15.sp,color: Colors.orange,
-                            fontWeight: FontWeight.w600,
-                          ),),
+                          Text(
+                            "★★★★★",
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           SizedBox(width: 5.w),
                           Icon(
                             Icons.arrow_forward_ios,
@@ -211,7 +263,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
 
                   SizedBox(height: 20.h),
-                  AppButtons.socialButton(text: "Add to Basket", onPressed: (){},bgColor: AppColors.primaryColor),
+                  AppButtons.socialButton(
+                    text: "Add to Basket",
+                    onPressed: () {
+                      Map<String, dynamic> productToAdd =
+                          Map<String, dynamic>.from(widget.product);
+
+                      productToAdd["qty"] = quantity;
+
+                      widget.cartController.addToCart(productToAdd);
+
+                      Utils.showSnackBar(
+                        "${widget.product["name"]} added to Cart",
+                      );
+                    },
+                    bgColor: AppColors.primaryColor,
+                  ),
                 ],
               ),
             ),

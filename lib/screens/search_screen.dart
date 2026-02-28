@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/screens/subProducts_screen.dart';
 
@@ -13,12 +14,12 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
   final List<Color> colors = [
-    const Color(0xff53B175).withValues(alpha: 26), // 10%
-    const Color(0xffF8A44C).withValues(alpha: 26), // 10%
-    const Color(0xffF7A593).withValues(alpha: 64), // 25%
-    const Color(0xffD3B0E0).withValues(alpha: 64), // 25%
-    const Color(0xffFDE598).withValues(alpha: 64), // 25%
-    const Color(0xffB7DFF5).withValues(alpha: 64), // 25%
+    const Color(0xff53B175).withValues(alpha: 26),
+    const Color(0xffF8A44C).withValues(alpha: 26),
+    const Color(0xffF7A593).withValues(alpha: 64),
+    const Color(0xffD3B0E0).withValues(alpha: 64),
+    const Color(0xffFDE598).withValues(alpha: 64),
+    const Color(0xffB7DFF5).withValues(alpha: 64),
   ];
   final List<Map<String, String>> allItems = [
     {
@@ -108,12 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 final item = filteredItems[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SubproductsScreen()),
-                    );
-                  },
+                  onTap: () => Get.to(()=> SubproductsScreen()),
                   child: Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(

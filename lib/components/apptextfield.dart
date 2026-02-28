@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery_app/components/utils.dart';
-
 class Apptextfield extends StatelessWidget {
   final String? hint;
   final bool? isPassword;
@@ -9,7 +8,7 @@ class Apptextfield extends StatelessWidget {
   final String? label;
   final IconButton? suffixIcon;
   final double? fontSize;
-  final ValueChanged<String>? onChanged; // typo fix
+  final ValueChanged<String>? onChanged;
   final TextStyle? labelStyle;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
@@ -55,6 +54,7 @@ class Apptextfield extends StatelessWidget {
           labelText: label,
           labelStyle: labelStyle,
           hintStyle: TextStyle(
+            fontFamily: "Gilroy",fontWeight: FontWeight.bold,
             color: AppColors.lightGrey,
             fontSize: fontSize,
           ),
