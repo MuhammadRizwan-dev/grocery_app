@@ -23,6 +23,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     "pi_3T5SJzJ9jDKffTGg0dJJ4iFx_secret_idCo1wRxTzmik3RqkdbBheV8L",
     "pi_3T5SKOJ9jDKffTGg08DTuKCd_secret_kGdl1oxboQL0Q2Aa1fLKW6AJv",
     "pi_3T5SLbJ9jDKffTGg0MaSeKlG_secret_3jWjDE0hG0IqRbn0iMtJtwNo7",
+    "pi_3T6CJcJ9jDKffTGg1xWAAVyW_secret_PsKgx7TkGN97ugyCaEjbNMiyg",
+    "pi_3T6CKGJ9jDKffTGg003Rwdiy_secret_uFKveJXwFhIcEYkd0e32cgSfB",
   ];
   int secretIndex = 0;
   final CartController cartController = Get.find();
@@ -156,22 +158,50 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       paymentSheetParameters: SetupPaymentSheetParameters(
                         paymentIntentClientSecret: currentSecret,
                         merchantDisplayName: 'Grocery App',
+                        appearance: PaymentSheetAppearance(
+                          colors: PaymentSheetAppearanceColors(
+                            primary: AppColors.primaryColor,
+                            background: AppColors.whiteColor,
+                            componentBackground: AppColors.verylightgrey,
+                            componentBorder: AppColors.lightGrey,
+                            primaryText: Colors.black,
+                            secondaryText: AppColors.lightGrey,
+                            placeholderText: AppColors.lightGrey,
+                            icon: AppColors.primaryColor,
+                            error: Colors.red,
+                          ),
+                          shapes: PaymentSheetShape(
+                            borderRadius: 12.r,
+                            borderWidth: 1.0,
+                          ),
+                          primaryButton: PaymentSheetPrimaryButtonAppearance(
+                            shapes: PaymentSheetPrimaryButtonShape(
+                              blurRadius: 8.r,
+                            ),
+                            colors: PaymentSheetPrimaryButtonTheme(
+                              light: PaymentSheetPrimaryButtonThemeColors(
+                                background: AppColors.primaryColor,
+                                text: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
                         style: ThemeMode.light,
                       ),
                     );
                     await Future.delayed(Duration(seconds: 1));
                     await Stripe.instance.presentPaymentSheet();
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                    print("Payment Sheet Processed!");
-                   setState(() {
-                     secretIndex++;
-                   });
-                    await _finishOrder(itemsForOrder);
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    debugPrint("Payment Sheet Processed!");
+                    setState(() {
+                      secretIndex++;
+                    });
+                    await _finishOrder(itemsForOrder,"Credit Card", "Paid");
                   } catch (e) {
                     if (e is StripeException) {
                       Utils.showSnackBar(
@@ -183,7 +213,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     }
                   }
                 } else if (selectedPaymentMethod == "Cash On Delivery") {
-                  await _finishOrder(itemsForOrder);
+                  await _finishOrder(itemsForOrder,"Cash On Delivery","Pending");
                 } else {
                   Utils.showSnackBar(
                     "This method is coming soon!",
@@ -200,11 +230,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> _finishOrder(List items) async {
+  Future<void> _finishOrder(List items, String method, String status) async {
     await orderController.placeOrder(
       items: items,
       total: cartController.totalPrice,
       address: "User's Delivery Address",
+      paymentMethod: method,
+      paymentStatus: status,
     );
 
     cartController.cartItems.clear();

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:vibration/vibration.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 class OrderController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
   var myOrders = <QueryDocumentSnapshot>[].obs;
@@ -16,6 +17,7 @@ class OrderController extends GetxController {
     fetchOrders();
     listenToStatusNotifications();
   }
+
   @override
   void onClose() {
     _audioPlayer.dispose();
@@ -50,7 +52,7 @@ class OrderController extends GetxController {
           .collection('user_notifications')
           .where('userId', isEqualTo: uid)
           .where('isSeen', isEqualTo: false)
-         // .where('timestamp', isGreaterThan: Timestamp.now())
+          // .where('timestamp', isGreaterThan: Timestamp.now())
           .snapshots()
           .listen((snapshot) {
             for (var change in snapshot.docChanges) {
@@ -97,13 +99,14 @@ class OrderController extends GetxController {
     required List items,
     required double total,
     required String address,
+    required String paymentMethod,
+    required String paymentStatus,
   }) async {
     try {
       String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
       String name =
           FirebaseAuth.instance.currentUser?.displayName ?? "Customer";
-      String shortOrderId = DateTime.now().millisecondsSinceEpoch.toString().substring(8);
-      String displayOrderId = "ORD-$shortOrderId";
+      String displayOrderId = "ORD-${DateTime.now().millisecondsSinceEpoch}";
       DocumentReference orderDoc = await FirebaseFirestore.instance
           .collection('orders')
           .add({
@@ -114,17 +117,19 @@ class OrderController extends GetxController {
             'totalPrice': total,
             'address': address,
             'status': 'Pending',
+            'paymentMethod': paymentMethod,
+            'paymentStatus': paymentStatus,
             'createdAt': FieldValue.serverTimestamp(),
           });
       await FirebaseFirestore.instance.collection('admin_notifications').add({
         'orderId': displayOrderId,
-        'message': 'New Order from : $name arrived',
+        'message': 'New Order($paymentMethod) from : $name arrived',
         'amount': total,
+        'paymentStatus': paymentStatus,
         'isRead': false,
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      print("Order Placed Successfully!");
+      debugPrint("Order Placed Successfully with $paymentMethod!");
     } catch (e) {
       Get.snackbar(
         "Error",

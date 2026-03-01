@@ -16,7 +16,7 @@ class Utils {
     try {
       await FacebookAuth.instance.logOut();
       final LoginResult result = await FacebookAuth.instance.login(
-        permissions: ['email', 'public_profile'],loginBehavior: LoginBehavior.webOnly,
+        permissions: ['email', 'public_profile'],
       );
       String? fbEmail;
       if (result.status == LoginStatus.success) {
