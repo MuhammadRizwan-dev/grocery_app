@@ -158,34 +158,34 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       paymentSheetParameters: SetupPaymentSheetParameters(
                         paymentIntentClientSecret: currentSecret,
                         merchantDisplayName: 'Grocery App',
-                        appearance: PaymentSheetAppearance(
-                          colors: PaymentSheetAppearanceColors(
-                            primary: AppColors.primaryColor,
-                            background: AppColors.whiteColor,
-                            componentBackground: AppColors.verylightgrey,
-                            componentBorder: AppColors.lightGrey,
-                            primaryText: Colors.black,
-                            secondaryText: AppColors.lightGrey,
-                            placeholderText: AppColors.lightGrey,
-                            icon: AppColors.primaryColor,
-                            error: Colors.red,
-                          ),
-                          shapes: PaymentSheetShape(
-                            borderRadius: 12.r,
-                            borderWidth: 1.0,
-                          ),
-                          primaryButton: PaymentSheetPrimaryButtonAppearance(
-                            shapes: PaymentSheetPrimaryButtonShape(
-                              blurRadius: 8.r,
-                            ),
-                            colors: PaymentSheetPrimaryButtonTheme(
-                              light: PaymentSheetPrimaryButtonThemeColors(
-                                background: AppColors.primaryColor,
-                                text: AppColors.whiteColor,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // appearance: PaymentSheetAppearance(
+                        //   colors: PaymentSheetAppearanceColors(
+                        //     primary: AppColors.primaryColor,
+                        //     background: AppColors.whiteColor,
+                        //     componentBackground: AppColors.verylightgrey,
+                        //     componentBorder: AppColors.lightGrey,
+                        //     primaryText: Colors.black,
+                        //     secondaryText: AppColors.lightGrey,
+                        //     placeholderText: AppColors.lightGrey,
+                        //     icon: AppColors.primaryColor,
+                        //     error: Colors.red,
+                        //   ),
+                        //   shapes: PaymentSheetShape(
+                        //     borderRadius: 12.r,
+                        //     borderWidth: 1.0,
+                        //   ),
+                        //   primaryButton: PaymentSheetPrimaryButtonAppearance(
+                        //     shapes: PaymentSheetPrimaryButtonShape(
+                        //       blurRadius: 8.r,
+                        //     ),
+                        //     colors: PaymentSheetPrimaryButtonTheme(
+                        //       light: PaymentSheetPrimaryButtonThemeColors(
+                        //         background: AppColors.primaryColor,
+                        //         text: AppColors.whiteColor,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         style: ThemeMode.light,
                       ),
                     );
