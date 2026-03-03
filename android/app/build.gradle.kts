@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.grocery_app"
+    namespace = "com.app.grocery_app"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 

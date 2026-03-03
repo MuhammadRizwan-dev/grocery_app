@@ -16,17 +16,14 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final List<String> myStripeSecrets = [
-    "pi_3T5SDRJ9jDKffTGg1sxd0ZmQ_secret_sOaSdNJbPNDdNgFylegLtM9eE",
-    "pi_3T5SIJJ9jDKffTGg1LVeXzgI_secret_xD7HQWKh5GAYSlvmmmv5rPv11",
-    "pi_3T5SJ9J9jDKffTGg1aH64TBF_secret_B98aREeGpIk9X2vTMrM5BSIDN",
-    "pi_3T5SJaJ9jDKffTGg0Je968ov_secret_Ds1Unhne7mKltKVfcXfEbrypm",
-    "pi_3T5SJzJ9jDKffTGg0dJJ4iFx_secret_idCo1wRxTzmik3RqkdbBheV8L",
-    "pi_3T5SKOJ9jDKffTGg08DTuKCd_secret_kGdl1oxboQL0Q2Aa1fLKW6AJv",
-    "pi_3T5SLbJ9jDKffTGg0MaSeKlG_secret_3jWjDE0hG0IqRbn0iMtJtwNo7",
-    "pi_3T6CJcJ9jDKffTGg1xWAAVyW_secret_PsKgx7TkGN97ugyCaEjbNMiyg",
-    "pi_3T6CKGJ9jDKffTGg003Rwdiy_secret_uFKveJXwFhIcEYkd0e32cgSfB",
-  ];
-  int secretIndex = 0;
+    "pi_3T6ze1J9jDKffTGg1kYJjVb0_secret_q8SojYlt68dcFlDdGy62aXFUq",
+    "pi_3T6zdZJ9jDKffTGg1KTzv2oZ_secret_ElCPfSCiEo67mvr1NDJIWrl5m",
+   "pi_3T6Zv0J9jDKffTGg1wPuavgx_secret_oQhDeIDMGvSDm1Xaem4ZZ0N0v",
+    "pi_3T6ZuVJ9jDKffTGg0nSUDs5Q_secret_TK9uXzsDOEWJ3vbfaX2QO6H9N",
+    "pi_3T6ZtwJ9jDKffTGg0jDQd190_secret_jJvSGjGobGkh8odXgYP4qNF8R",
+    "pi_3T6ZtWJ9jDKffTGg0WADuYIY_secret_9N9N9N9N9N9N9N9N9N9N9N9N",
+    ];
+  static int secretIndex = 0;
   final CartController cartController = Get.find();
   final OrderController orderController = Get.put(OrderController());
   String selectedDeliveryMethod = "Selected Method";
@@ -156,48 +153,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     String currentSecret = myStripeSecrets[secretIndex];
                     await Stripe.instance.initPaymentSheet(
                       paymentSheetParameters: SetupPaymentSheetParameters(
-                        paymentIntentClientSecret: currentSecret,
+                        paymentIntentClientSecret:currentSecret,
                         merchantDisplayName: 'Grocery App',
-                        // appearance: PaymentSheetAppearance(
-                        //   colors: PaymentSheetAppearanceColors(
-                        //     primary: AppColors.primaryColor,
-                        //     background: AppColors.whiteColor,
-                        //     componentBackground: AppColors.verylightgrey,
-                        //     componentBorder: AppColors.lightGrey,
-                        //     primaryText: Colors.black,
-                        //     secondaryText: AppColors.lightGrey,
-                        //     placeholderText: AppColors.lightGrey,
-                        //     icon: AppColors.primaryColor,
-                        //     error: Colors.red,
-                        //   ),
-                        //   shapes: PaymentSheetShape(
-                        //     borderRadius: 12.r,
-                        //     borderWidth: 1.0,
-                        //   ),
-                        //   primaryButton: PaymentSheetPrimaryButtonAppearance(
-                        //     shapes: PaymentSheetPrimaryButtonShape(
-                        //       blurRadius: 8.r,
-                        //     ),
-                        //     colors: PaymentSheetPrimaryButtonTheme(
-                        //       light: PaymentSheetPrimaryButtonThemeColors(
-                        //         background: AppColors.primaryColor,
-                        //         text: AppColors.whiteColor,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
+                        appearance: PaymentSheetAppearance(
+                          colors: PaymentSheetAppearanceColors(
+                            primary: AppColors.primaryColor,
+                            background: AppColors.whiteColor,
+                            componentBackground: AppColors.verylightgrey,
+                            componentBorder: AppColors.lightGrey,
+                            primaryText: Colors.black,
+                            secondaryText: AppColors.lightGrey,
+                            placeholderText: AppColors.lightGrey,
+                            icon: AppColors.primaryColor,
+                            error: Colors.red,
+                          ),
+                          shapes: PaymentSheetShape(
+                            borderRadius: 12.r,
+                            borderWidth: 1.0,
+                          ),
+                          primaryButton: PaymentSheetPrimaryButtonAppearance(
+                            shapes: PaymentSheetPrimaryButtonShape(
+                              blurRadius: 8.r,
+                            ),
+                            colors: PaymentSheetPrimaryButtonTheme(
+                              light: PaymentSheetPrimaryButtonThemeColors(
+                                background: AppColors.primaryColor,
+                                text: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
                         style: ThemeMode.light,
                       ),
                     );
-                    await Future.delayed(Duration(seconds: 1));
                     await Stripe.instance.presentPaymentSheet();
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
-                    debugPrint("Payment Sheet Processed!");
                     setState(() {
                       secretIndex++;
                     });

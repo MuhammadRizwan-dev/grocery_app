@@ -124,7 +124,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     Get.back();
                     if (user != null) {
                       Utils.showSnackBar(
-                        color: AppColors.lightGrey,
+                        color: AppColors.primaryColor,
                         "Logged in as ${user.user!.displayName}",
                       );
                       Get.offAll(() => AppRoot());
@@ -216,17 +216,15 @@ class _SigninScreenState extends State<SigninScreen> {
                       builder: (_) =>
                           Center(child: CircularProgressIndicator()),
                     );
-                    await FacebookAuth.instance.logOut();
                     final user = await Utils.signInWithFacebook();
-                       Get.back();
+                    Get.back();
                     if (user != null) {
                       Utils.showSnackBar(
                         "Logged in as ${user.user!.displayName}",
-                        color: Colors.green,
+                        color: AppColors.primaryColor,
                       );
                       Get.offAll(() => AppRoot());
-                    }
-                    if (user == null) {
+                    } else {
                       Utils.showSnackBar("Login Cancelled");
                     }
                   },
