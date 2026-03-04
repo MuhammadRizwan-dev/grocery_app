@@ -14,9 +14,14 @@ class Utils {
   Utils._();
   static Future<UserCredential?> signInWithFacebook() async {
     try {
-    //  await FacebookAuth.instance.logOut();
+    print("---------- YOUR KEY HASH ----------");
+    } catch (e) {
+    print("Hash error: $e");
+    }
+    try {
+      await FacebookAuth.instance.logOut();
       final LoginResult result = await FacebookAuth.instance.login(
-        permissions: ['email', 'public_profile'],loginBehavior: LoginBehavior.dialogOnly
+        permissions: ['email', 'public_profile'],loginBehavior: LoginBehavior.webOnly
       );
       String? fbEmail;
       if (result.status == LoginStatus.success) {
