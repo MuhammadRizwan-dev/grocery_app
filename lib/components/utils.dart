@@ -304,24 +304,6 @@ class Utils {
   }
 }
 
-// class SearchHelper {
-//   static List<Map<String, String>> performSearch({
-//     required String query,
-//     required List<Map<String, String>> originalList,
-//     required String searchKey,
-//   }) {
-//     if (query.isEmpty) {
-//       return List.from(originalList);
-//     }
-//     return originalList
-//         .where(
-//           (item) =>
-//               item[searchKey]!.toLowerCase().contains(query.toLowerCase()),
-//         )
-//         .toList();
-//   }
-// }
-
 class AppColors {
   AppColors._();
   static final Color primaryColor = Color(0xff53B175);

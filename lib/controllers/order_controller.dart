@@ -95,7 +95,7 @@ class OrderController extends GetxController {
     }
   }
 
-  Future<void> placeOrder({
+  Future<String?> placeOrder({
     required List items,
     required double total,
     required String address,
@@ -130,6 +130,7 @@ class OrderController extends GetxController {
         'timestamp': FieldValue.serverTimestamp(),
       });
       debugPrint("Order Placed Successfully with $paymentMethod!");
+      return orderDoc.id;
     } catch (e) {
       Get.snackbar(
         "Error",

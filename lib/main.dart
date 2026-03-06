@@ -7,12 +7,15 @@ import 'package:grocery_app/controllers/cart_controller.dart';
 import 'package:grocery_app/firebase_options.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 
+import 'controllers/network_conroller.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Stripe.publishableKey =
       "pk_test_51T4toxJ9jDKffTGguBhZgc0jAIEQZYfL8BkWLYfDWjCQC3MPSa7bcVFmCvef6Ucj1KtTiGpqzejwt70n08LY8G0y00Wq2cRQRw";
   await Stripe.instance.applySettings();
+  Get.put(NetworkController(), permanent: true);
   runApp(const MyApp());
 }
 

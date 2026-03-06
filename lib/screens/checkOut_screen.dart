@@ -222,7 +222,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _finishOrder(List items, String method, String status) async {
-    await orderController.placeOrder(
+    String? generatedOrderId =  await orderController.placeOrder(
       items: items,
       total: cartController.totalPrice,
       address: "User's Delivery Address",
@@ -230,8 +230,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       paymentStatus: status,
     );
 
-    cartController.cartItems.clear();
-    Get.offAll(() => const OrderAcceptedScreen());
+    if (generatedOrderId != null) {
+      cartController.cartItems.clear();
+      Get.offAll(() => OrderAcceptedScreen(orderId: generatedOrderId));
+    } else {
+      Utils.showSnackBar("Order failed to save!", color: Colors.red);
+    }
   }
 
   void showSelectedOption(

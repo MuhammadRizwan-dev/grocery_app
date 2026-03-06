@@ -5,9 +5,11 @@ import 'package:grocery_app/components/utils.dart';
 import 'package:grocery_app/controllers/cart_controller.dart';
 
 import '../root/app_root.dart';
+import 'order_tracing_screen.dart';
 
 class OrderAcceptedScreen extends StatefulWidget {
-  const OrderAcceptedScreen({super.key});
+  final String orderId;
+  const OrderAcceptedScreen({super.key, required this.orderId});
 
   @override
   State<OrderAcceptedScreen> createState() => _OrderAcceptedScreenState();
@@ -80,7 +82,7 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                       AppButtons.socialButton(
                         text: "Track Order",
                         onPressed: () {
-                          Utils.showErrorDialog(context);
+                          Get.to(() =>  OrderTrackingScreen(orderId: widget.orderId,));
                         },
                         bgColor: AppColors.primaryColor,
                       ),
