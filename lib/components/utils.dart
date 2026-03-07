@@ -14,7 +14,7 @@ class Utils {
   Utils._();
   static Future<UserCredential?> signInWithFacebook() async {
     try {
-    print("---------- YOUR KEY HASH ----------");
+    print("---------- KEY HASH ----------");
     } catch (e) {
     print("Hash error: $e");
     }
@@ -208,7 +208,7 @@ class Utils {
               borderRadius: BorderRadius.circular(24.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 20.r,
                   offset: Offset(0, 10),
                 ),

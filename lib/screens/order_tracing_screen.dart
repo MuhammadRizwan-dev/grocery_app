@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../components/utils.dart';
 
 class OrderTrackingScreen extends StatefulWidget {
-  final String orderId; // <-- Order ID lazmi pass karein yahan
+  final String orderId;
  const OrderTrackingScreen({super.key, required this.orderId});
 
 @override
@@ -22,28 +22,22 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
 
     super.initState();
     _simulateRiderMovement();
-    // 🔥 YAHAN LAGANI HAI CONDITION
     _listenToOrderUpdates();
 
-    // Aapka purana map wala code bhi yahan chalta rahega
+
   }
 
   void _listenToOrderUpdates() {
     FirebaseFirestore.instance
         .collection('orders')
-        .doc(widget.orderId) // Jo order user dekh raha hai
-        .snapshots() // Real-time check
+        .doc(widget.orderId)
+        .snapshots()
         .listen((snapshot) {
 
       if (snapshot.exists) {
         String status = snapshot['status'];
-
-        // 🚨 Agar Admin ne Admin App se status "Cancelled" kiya
         if (status == "Cancelled") {
-          // 1. Map wali screen se peeche le jao (Optional)
           Get.back();
-
-          // 2. Wo "Error Bag" wala dialog dikhao
           Utils.showErrorDialog(context);
         }
       }
