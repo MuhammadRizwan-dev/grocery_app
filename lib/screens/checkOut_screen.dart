@@ -16,6 +16,10 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final List<String> myStripeSecrets = [
+    "pi_3T8laTJ9jDKffTGg1Dsj41ke_secret_XPnaxPOPXNqYKkKHsfJ4nFRNB",
+    "pi_3T8laCJ9jDKffTGg0CxF7cm7_secret_fP6oBi0za44HoBiyrsDCsW5KI",
+    "pi_3T8lRkJ9jDKffTGg1Dh8dP37_secret_fuJoGZSvJSYTvna00kgPGfiNE",
+    "pi_3T8lRRJ9jDKffTGg05esNfaR_secret_Dj0ZKvpCSYwEt9JGICd3ebyRh",
     "pi_3T8iXcJ9jDKffTGg1qxau3Lo_secret_daiIXblwzavs9ohMsCM46BM5X",
     "pi_3T8iYHJ9jDKffTGg0aOHmYHu_secret_wqJCVv8ch1fi1wgGaYUCPjXAW",
     "pi_3T8iYYJ9jDKffTGg1QR2ASgS_secret_UWdwri2sI2YwjtkF4PKDNYRqD",
