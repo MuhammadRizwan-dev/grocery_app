@@ -16,15 +16,12 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final List<String> myStripeSecrets = [
-    "pi_3T78XcJ9jDKffTGg0PzPYRVL_secret_DIBCE85qNAzS5zQoNLKurQxYT",
-    "pi_3T78X8J9jDKffTGg0x0UTwDD_secret_6A04RPfAI6V1lQI30uzNUAKC8",
-    "pi_3T6ze1J9jDKffTGg1kYJjVb0_secret_q8SojYlt68dcFlDdGy62aXFUq",
-    "pi_3T6zdZJ9jDKffTGg1KTzv2oZ_secret_ElCPfSCiEo67mvr1NDJIWrl5m",
-   "pi_3T6Zv0J9jDKffTGg1wPuavgx_secret_oQhDeIDMGvSDm1Xaem4ZZ0N0v",
-    "pi_3T6ZuVJ9jDKffTGg0nSUDs5Q_secret_TK9uXzsDOEWJ3vbfaX2QO6H9N",
-    "pi_3T6ZtwJ9jDKffTGg0jDQd190_secret_jJvSGjGobGkh8odXgYP4qNF8R",
-    "pi_3T6ZtWJ9jDKffTGg0WADuYIY_secret_9N9N9N9N9N9N9N9N9N9N9N9N",
-    ];
+    "pi_3T8iXcJ9jDKffTGg1qxau3Lo_secret_daiIXblwzavs9ohMsCM46BM5X",
+    "pi_3T8iYHJ9jDKffTGg0aOHmYHu_secret_wqJCVv8ch1fi1wgGaYUCPjXAW",
+    "pi_3T8iYYJ9jDKffTGg1QR2ASgS_secret_UWdwri2sI2YwjtkF4PKDNYRqD",
+    "pi_3T8iYnJ9jDKffTGg0cFWNVDd_secret_97LsxL0IrMnbCo8fnGvoAeevK",
+    "pi_3T8iZ5J9jDKffTGg0aydjPHr_secret_Ms9BSOyeaijyMmIQKru7jScaK",
+  ];
   static int secretIndex = 0;
   final CartController cartController = Get.find();
   final OrderController orderController = Get.put(OrderController());
@@ -155,8 +152,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     String currentSecret = myStripeSecrets[secretIndex];
                     await Stripe.instance.initPaymentSheet(
                       paymentSheetParameters: SetupPaymentSheetParameters(
-                        paymentIntentClientSecret:currentSecret,
-                        merchantDisplayName: 'Grocery App',
+                        paymentIntentClientSecret: currentSecret,
+                        merchantDisplayName: 'Fresh Grocery Store',
                         appearance: PaymentSheetAppearance(
                           colors: PaymentSheetAppearanceColors(
                             primary: AppColors.primaryColor,
@@ -192,7 +189,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     setState(() {
                       secretIndex++;
                     });
-                    await _finishOrder(itemsForOrder,"Credit Card", "Paid");
+                    await _finishOrder(itemsForOrder, "Credit Card", "Paid");
                   } catch (e) {
                     if (e is StripeException) {
                       Utils.showSnackBar(
@@ -204,7 +201,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     }
                   }
                 } else if (selectedPaymentMethod == "Cash On Delivery") {
-                  await _finishOrder(itemsForOrder,"Cash On Delivery","Pending");
+                  await _finishOrder(
+                    itemsForOrder,
+                    "Cash On Delivery",
+                    "Pending",
+                  );
                 } else {
                   Utils.showSnackBar(
                     "This method is coming soon!",
@@ -222,7 +223,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _finishOrder(List items, String method, String status) async {
-    String? generatedOrderId =  await orderController.placeOrder(
+    String? generatedOrderId = await orderController.placeOrder(
       items: items,
       total: cartController.totalPrice,
       address: "User's Delivery Address",
@@ -231,7 +232,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
 
     if (generatedOrderId != null) {
-      cartController.cartItems.clear();
       Get.offAll(() => OrderAcceptedScreen(orderId: generatedOrderId));
     } else {
       Utils.showSnackBar("Order failed to save!", color: Colors.red);

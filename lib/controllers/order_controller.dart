@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
 import 'package:vibration/vibration.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:geolocator/geolocator.dart';
 
 class OrderController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
   var myOrders = <QueryDocumentSnapshot>[].obs;
   var isLoading = true.obs;
-
+  var currentOrderStatus = "Pending".obs;
   @override
   void onInit() {
     super.onInit();
@@ -23,7 +24,25 @@ class OrderController extends GetxController {
     _audioPlayer.dispose();
     super.onClose();
   }
+  void trackCurrentOrder(String orderId) {
+    currentOrderStatus.value = "Pending";
 
+    FirebaseFirestore.instance
+        .collection('orders')
+        .doc(orderId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        String status = snapshot['status'] ?? "Pending";
+        currentOrderStatus.value = status;
+        if (status == "Cancelled") {
+          if (Get.isOverlaysOpen) Get.back();
+          Get.back();
+          Utils.showErrorDialog(Get.context!);
+        }
+      }
+    });
+  }
   void fetchOrders() {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
     if (uid.isNotEmpty) {
@@ -43,7 +62,26 @@ class OrderController extends GetxController {
           );
     }
   }
+  Future<void> cancelOrder(String orderId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .update({
+        'status': 'Cancelled',
+        'cancelledBy': 'User',
+      });
 
+      Get.snackbar(
+        "Order Cancelled",
+        "Your order has been cancelled successfully",
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar("Error", "Could not cancel order: $e");
+    }
+  }
   void listenToStatusNotifications() {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
 
@@ -103,6 +141,9 @@ class OrderController extends GetxController {
     required String paymentStatus,
   }) async {
     try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
       String name =
           FirebaseAuth.instance.currentUser?.displayName ?? "Customer";
@@ -119,6 +160,10 @@ class OrderController extends GetxController {
             'status': 'Pending',
             'paymentMethod': paymentMethod,
             'paymentStatus': paymentStatus,
+            'userLat': position.latitude,
+            'userLng': position.longitude,
+            'riderLatitude': position.latitude,
+            'riderLongitude': position.longitude,
             'createdAt': FieldValue.serverTimestamp(),
           });
       await FirebaseFirestore.instance.collection('admin_notifications').add({
