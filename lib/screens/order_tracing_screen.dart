@@ -120,7 +120,7 @@ class OrderTrackingScreen extends StatefulWidget {
 
 class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   final MapController _osmMapController = MapController();
-  osm.LatLng _storeLocation = const osm.LatLng(31.5204, 74.3587);
+ final osm.LatLng _storeLocation = const osm.LatLng(31.5204, 74.3587);
   osm.LatLng _userHome = const osm.LatLng(31.5204, 74.3587);
   osm.LatLng _riderPosition = const osm.LatLng(31.5204, 74.3587);
 
@@ -168,7 +168,6 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
       ),
       body: Stack(
         children: [
-          // 1. Map Layer
           FlutterMap(
             mapController: _osmMapController,
             options: MapOptions(initialCenter: _storeLocation, initialZoom: 15),
@@ -177,12 +176,15 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                 urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 userAgentPackageName: 'com.app.grocery_app',
               ),
+              // --- POLYLINE LAYER START ---
               PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: [_riderPosition, _userHome],
-                    strokeWidth: 4.0,
-                    color: AppColors.primaryColor.withValues(alpha: 0.7),
+                    points: [_storeLocation, _riderPosition, _userHome],
+                    strokeWidth: 5.0,
+                    color: AppColors.primaryColor,
+                    borderStrokeWidth: 1.0,
+                    borderColor: Colors.white,
                   ),
                 ],
               ),
@@ -198,14 +200,14 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                     point: _userHome,alignment: Alignment.topCenter,
                     width: 60,
                     height: 70,
-                    child: _buildProfessionalMarker(Icons.home, Colors.blue, "Home"),
+                    child: _buildMarker(Icons.home, Colors.blue, "Home"),
                   ),
                   Marker(
                     point: _riderPosition,
                     alignment: Alignment.topCenter,
                     width: 60,
                     height: 70,
-                    child: _buildProfessionalMarker(Icons.delivery_dining, Colors.orange, "Rider"),
+                    child: _buildMarker(Icons.delivery_dining, Colors.orange, "Rider"),
                   ),
                 ],
               ),
@@ -233,7 +235,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                   Container(
                     padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: Colors.orange.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.timer, color: Colors.orange, size: 24.sp),
@@ -272,7 +274,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
     );
   }
 
-  Widget _buildProfessionalMarker(IconData icon, Color color, String label) {
+  Widget _buildMarker(IconData icon, Color color, String label) {
     return Column(
       children: [
         Container(
