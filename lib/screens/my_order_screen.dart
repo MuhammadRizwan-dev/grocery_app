@@ -4,9 +4,17 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery_app/controllers/order_controller.dart';
 
-class MyOrdersScreen extends StatelessWidget {
+import '../components/utils.dart';
+import 'order_tracing_screen.dart';
+
+class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
 
+  @override
+  State<MyOrdersScreen> createState() => _MyOrdersScreenState();
+}
+
+class _MyOrdersScreenState extends State<MyOrdersScreen> {
   @override
   Widget build(BuildContext context) {
     final OrderController orderController = Get.put(OrderController());
@@ -75,7 +83,15 @@ class MyOrdersScreen extends StatelessWidget {
               ),
               child: ListTile(
                 contentPadding: EdgeInsets.all(12.w),
-                onTap: () {},
+                onTap: () {
+                  if (status == "Accepted" || status == "Rider is arriving...") {
+                    Get.to(() => OrderTrackingScreen(orderId: order.id));
+                  } else if (status == "Delivered") {
+                    Utils.showSnackBar("This order was delivered!", color: Colors.green);
+                  } else {
+                    Utils.showSnackBar("Tracking will start once the order is accepted.", color: Colors.orange);
+                  }
+                },
                 leading: Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(

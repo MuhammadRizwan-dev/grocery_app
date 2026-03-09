@@ -129,7 +129,7 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (status == "Accepted")
+                        if (status == "Accepted"|| status == "Rider is arriving...")
                         AppButtons.socialButton(
                           text: "Track Order",
                           onPressed: () {

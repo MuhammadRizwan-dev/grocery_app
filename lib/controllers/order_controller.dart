@@ -24,6 +24,7 @@ class OrderController extends GetxController {
     _audioPlayer.dispose();
     super.onClose();
   }
+
   void trackCurrentOrder(String orderId) {
     currentOrderStatus.value = "Pending";
 
@@ -32,17 +33,18 @@ class OrderController extends GetxController {
         .doc(orderId)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.exists) {
-        String status = snapshot['status'] ?? "Pending";
-        currentOrderStatus.value = status;
-        if (status == "Cancelled") {
-          if (Get.isOverlaysOpen) Get.back();
-          Get.back();
-          Utils.showErrorDialog(Get.context!);
-        }
-      }
-    });
+          if (snapshot.exists) {
+            String status = snapshot['status'] ?? "Pending";
+            currentOrderStatus.value = status;
+            if (status == "Cancelled") {
+              if (Get.isOverlaysOpen) Get.back();
+              Get.back();
+              Utils.showErrorDialog(Get.context!);
+            }
+          }
+        });
   }
+
   void fetchOrders() {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
     if (uid.isNotEmpty) {
@@ -62,15 +64,12 @@ class OrderController extends GetxController {
           );
     }
   }
+
   Future<void> cancelOrder(String orderId) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('orders')
-          .doc(orderId)
-          .update({
-        'status': 'Cancelled',
-        'cancelledBy': 'User',
-      });
+      await FirebaseFirestore.instance.collection('orders').doc(orderId).update(
+        {'status': 'Cancelled', 'cancelledBy': 'User'},
+      );
 
       Get.snackbar(
         "Order Cancelled",
@@ -82,6 +81,7 @@ class OrderController extends GetxController {
       Get.snackbar("Error", "Could not cancel order: $e");
     }
   }
+
   void listenToStatusNotifications() {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
 
@@ -160,8 +160,8 @@ class OrderController extends GetxController {
             'status': 'Pending',
             'paymentMethod': paymentMethod,
             'paymentStatus': paymentStatus,
-            'userLat': position.latitude,
-            'userLng': position.longitude,
+            'userLatitude': position.latitude,
+            'userLongitude': position.longitude,
             'riderLatitude': position.latitude,
             'riderLongitude': position.longitude,
             'createdAt': FieldValue.serverTimestamp(),

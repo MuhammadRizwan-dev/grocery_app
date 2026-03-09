@@ -154,17 +154,20 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
         .collection('orders')
         .doc(widget.orderId)
         .snapshots()
-        .listen((snapshot) {
+        .listen((snapshot) async {
           if (snapshot.exists) {
             var data = snapshot.data() as Map<String, dynamic>;
-
+            if (data['riderLatitude'] == null || data['userLatitude'] == null) {
+              debugPrint("Location data is missing in Firestore!");
+              return;
+            }
             osm.LatLng newRiderPos = osm.LatLng(
-              data['riderLatitude'],
-              data['riderLongitude'],
+              (data['riderLatitude'] as num).toDouble(),
+              (data['riderLongitude'] as num).toDouble(),
             );
             osm.LatLng newUserHome = osm.LatLng(
-              data['userLatitude'],
-              data['userLongitude'],
+              (data['userLatitude'] as num).toDouble(),
+              (data['userLongitude'] as num).toDouble(),
             );
             if (!_isInitialized) {
               setState(() {
@@ -172,12 +175,22 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                 _riderPosition = newRiderPos;
                 _isInitialized = true;
               });
-              _animatedMapController.animatedFitCamera(
-                cameraFit: CameraFit.bounds(
-                  bounds: LatLngBounds.fromPoints([newRiderPos, newUserHome]),
-                  padding: EdgeInsets.all(70.w),
-                ),
-              );
+              await Future.delayed(const Duration(milliseconds: 1200));
+              if (mounted) {
+                try {
+                  _animatedMapController.animatedFitCamera(
+                    cameraFit: CameraFit.bounds(
+                      bounds: LatLngBounds.fromPoints([
+                        newRiderPos,
+                        newUserHome,
+                      ]),
+                      padding: EdgeInsets.all(70.w),
+                    ),
+                  );
+                } catch (e) {
+                  debugPrint("Map Controller not attached yet: $e");
+                }
+              }
             } else {
               double newRotation = calculateBearing(
                 _riderPosition,
@@ -224,7 +237,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   children: [
                     TileLayer(
                       urlTemplate:
-                          "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+                          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                       userAgentPackageName: 'com.app.grocery_app',
                     ),
                     PolylineLayer(
