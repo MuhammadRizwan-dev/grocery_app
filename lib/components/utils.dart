@@ -10,6 +10,7 @@ import 'package:grocery_app/root/app_root.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import '../main.dart';
+import 'package:geolocator/geolocator.dart';
 class Utils {
   Utils._();
   static Future<UserCredential?> signInWithFacebook() async {
@@ -301,6 +302,32 @@ class Utils {
       return File(pickedFile.path);
     }
     return null;
+  }
+  static Future<void> requestLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // 1. Check GPS Service
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return;
+    }
+
+    // 2. Check current permission
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      return;
+    }
   }
 }
 

@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    Utils.requestLocationPermission();
     Future.delayed(const Duration(seconds: 3), () {
         User? user = FirebaseAuth.instance.currentUser;
         if (user == null) {
