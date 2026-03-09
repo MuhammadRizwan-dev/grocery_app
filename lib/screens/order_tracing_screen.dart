@@ -131,7 +131,11 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     super.initState();
     _listenToOrderUpdates();
   }
-
+  @override
+  void dispose() {
+    _animatedMapController.dispose();
+    super.dispose();
+  }
   double _riderRotation = 0.0;
   double calculateBearing(osm.LatLng start, osm.LatLng end) {
     double lat1 = start.latitude * math.pi / 180;
@@ -148,69 +152,65 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
     double radians = math.atan2(y, x);
     return (radians * 180 / math.pi + 360) % 360;
   }
-
   void _listenToOrderUpdates() {
     FirebaseFirestore.instance
         .collection('orders')
         .doc(widget.orderId)
         .snapshots()
         .listen((snapshot) async {
-          if (snapshot.exists) {
-            var data = snapshot.data() as Map<String, dynamic>;
-            if (data['riderLatitude'] == null || data['userLatitude'] == null) {
-              debugPrint("Location data is missing in Firestore!");
-              return;
-            }
-            osm.LatLng newRiderPos = osm.LatLng(
-              (data['riderLatitude'] as num).toDouble(),
-              (data['riderLongitude'] as num).toDouble(),
-            );
-            osm.LatLng newUserHome = osm.LatLng(
-              (data['userLatitude'] as num).toDouble(),
-              (data['userLongitude'] as num).toDouble(),
-            );
-            if (!_isInitialized) {
-              setState(() {
-                _userHome = newUserHome;
-                _riderPosition = newRiderPos;
-                _isInitialized = true;
-              });
-              await Future.delayed(const Duration(milliseconds: 1200));
-              if (mounted) {
-                try {
-                  _animatedMapController.animatedFitCamera(
-                    cameraFit: CameraFit.bounds(
-                      bounds: LatLngBounds.fromPoints([
-                        newRiderPos,
-                        newUserHome,
-                      ]),
-                      padding: EdgeInsets.all(70.w),
-                    ),
-                  );
-                } catch (e) {
-                  debugPrint("Map Controller not attached yet: $e");
-                }
-              }
-            } else {
-              double newRotation = calculateBearing(
-                _riderPosition,
-                newRiderPos,
-              );
+      if (snapshot.exists) {
 
-              setState(() {
-                _riderRotation = newRotation;
-                _riderPosition = newRiderPos;
-              });
+        var data = snapshot.data() as Map<String, dynamic>;
+        debugPrint("New Data Received: Lat ${data['riderLatitude']}");
+        double uLat = (data['userLatitude'] as num).toDouble();
+        double uLng = (data['userLongitude'] as num).toDouble();
+        double rLat = (data['riderLatitude'] as num).toDouble();
+        double rLng = (data['riderLongitude'] as num).toDouble();
+        if (uLat == rLat && uLng == rLng) {
+          rLat = rLat + 0.005;
+          rLng = rLng + 0.005;
+        }
 
+        osm.LatLng newRiderPos = osm.LatLng(rLat, rLng);
+        osm.LatLng newUserHome = osm.LatLng(uLat, uLng);
+
+        if (!_isInitialized) {
+          setState(() {
+            _userHome = newUserHome;
+            _riderPosition = newRiderPos;
+            _isInitialized = true;
+          });
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _animatedMapController.animatedFitCamera(
+              cameraFit: CameraFit.bounds(
+                bounds: LatLngBounds.fromPoints([newRiderPos, newUserHome]),
+                padding: EdgeInsets.all(50.w),
+              ),
+            );
+          });
+        }
+        else {
+          double newRotation = calculateBearing(_riderPosition, newRiderPos);
+          if (_riderPosition.latitude != newRiderPos.latitude ||
+              _riderPosition.longitude != newRiderPos.longitude) {
+
+            setState(() {
+              _riderRotation = newRotation;
+              _riderPosition = newRiderPos;
+            });
+            Future.microtask(() {
               _animatedMapController.animateTo(
-                dest: _riderPosition,
-                rotation: _riderRotation,
-                zoom: 16.5,
-                curve: Curves.easeInOut,
+                dest: newRiderPos,
+                rotation: newRotation,
+                zoom: 15.5,
+                curve: Curves.linear,
+                duration: const Duration(milliseconds: 1500),
               );
-            }
+            });
           }
-        });
+        }
+      }
+    });
   }
 
   @override
@@ -232,12 +232,11 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                   mapController: _animatedMapController.mapController,
                   options: MapOptions(
                     initialCenter: _storeLocation,
-                    initialZoom: 15,
+                    initialZoom: 15.5,
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                       userAgentPackageName: 'com.app.grocery_app',
                     ),
                     PolylineLayer(
@@ -256,7 +255,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                       markers: [
                         Marker(
                           point: _storeLocation,
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           width: 40,
                           height: 40,
                           child: const Icon(
@@ -267,14 +266,14 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen>
                         ),
                         Marker(
                           point: _userHome,
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           width: 60,
                           height: 70,
                           child: _buildMarker(Icons.home, Colors.blue, "Home"),
                         ),
                         Marker(
                           point: _riderPosition,
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           width: 60,
                           height: 70,
                           child: Transform.rotate(
