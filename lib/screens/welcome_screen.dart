@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
             width: 1.sw,
             child: Image.asset("assets/backgroundImage.png", fit: BoxFit.cover),
           ),
-          Positioned(
+          Positioned(width: 1.sw,
             bottom: 30,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
@@ -26,26 +26,14 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   Image.asset("assets/carrotPic.png"),
                   Text(
-                    "Welcome",
+                    "Welcome\nto Our Store",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       fontWeight: FontWeight.w600,
                       fontSize: 48.sp,
                       color: AppColors.whiteColor,
                       letterSpacing: 0,
-                    ),
-                  ),
-                  Text(
-                    "to Our Store",
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: "Gilroy",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 48.sp,
-                      color: AppColors.whiteColor,
-                      letterSpacing: 0,
+                      height: 1.1,
                     ),
                   ),
                   Text(

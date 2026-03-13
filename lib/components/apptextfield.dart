@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery_app/components/utils.dart';
+
 class Apptextfield extends StatelessWidget {
   final String? hint;
   final bool? isPassword;
@@ -38,13 +39,12 @@ class Apptextfield extends StatelessWidget {
         onChanged: onChanged,
         obscureText: isPassword ?? false,
         keyboardType: keyboardType,
-        textInputAction: textInputAction ?? TextInputAction.next, // default next
+        textInputAction: textInputAction ?? TextInputAction.next,
         onFieldSubmitted: (_) {
           FocusScope.of(context).nextFocus();
         },
         textAlign: TextAlign.start,
         style: TextStyle(
-          fontFamily: 'Gilroy',
           fontWeight: FontWeight.w400,
           fontSize: 17.sp,
           color: Colors.black,
@@ -54,16 +54,15 @@ class Apptextfield extends StatelessWidget {
           labelText: label,
           labelStyle: labelStyle,
           hintStyle: TextStyle(
-            fontFamily: "Gilroy",fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.bold,
             color: AppColors.lightGrey,
-            fontSize: fontSize,
+            fontSize: fontSize?? 17.sp,
           ),
           suffixIcon: suffixIcon,
           suffixIconColor: AppColors.lightGrey,
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-          EdgeInsets.symmetric(horizontal: 0.w, vertical: 18.h),
+          contentPadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 18.h),
           border: const UnderlineInputBorder(),
         ),
       ),

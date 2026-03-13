@@ -75,17 +75,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
             ),
-            // Container(
-            //   height: 280.h,
-            //   width: double.infinity,
-            //   color: Colors.white,
-            //   padding: EdgeInsets.all(20.w),
-            //   child: (widget.product["image"] == null)
-            //       ? Icon(Icons.broken_image, size: 100.h)
-            //       : widget.product["isNetwork"] == true
-            //       ? Image.network(widget.product["image"], height: 200.h)
-            //       : Image.asset(widget.product["image"], height: 200.h),
-            // ),
 
             SizedBox(height: 10.h),
             Padding(
@@ -100,7 +89,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         widget.product["name"] ?? "No Name",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: "Gilroy",
                           fontWeight: FontWeight.w600,
                           fontSize: 22.sp,
                         ),
@@ -128,7 +116,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     widget.product["details"] ?? "No Details available",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       color: AppColors.lightGrey,
                       fontWeight: FontWeight.w600,
                       fontSize: 16.sp,

@@ -6,7 +6,7 @@ class FavouriteController extends GetxController {
     int index = favouriteItems.indexWhere(
       (item) => item["name"] == product["name"],
     );
-    if (index > 0) {
+    if (index >= 0) {
       favouriteItems.removeAt(index);
     } else {
       favouriteItems.add(product);

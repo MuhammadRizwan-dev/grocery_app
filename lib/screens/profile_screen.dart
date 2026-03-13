@@ -18,9 +18,7 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-
 class _ProfileScreenState extends State<ProfileScreen> {
- // final user = FirebaseAuth.instance.currentUser;
   User? user = FirebaseAuth.instance.currentUser;
   String displayEmail = "Loading...";
   File? profileImage;
@@ -31,9 +29,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     refreshUser();
   }
+
   void refreshUser() async {
     await FirebaseAuth.instance.currentUser?.reload();
-    var doc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+    var doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .get();
 
     if (mounted) {
       setState(() {
@@ -42,6 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
   void selectProfileImage() async {
     final picked = await Utils.pickImage();
     if (picked != null) {
@@ -56,8 +59,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user == null) return;
     setState(() => isUploading = true);
     final cloudinary = CloudinaryPublic(
-      'dckqdadpm',
-      'grocery_preset',
+      AppConfig.cloudinaryCloudName,
+      AppConfig.cloudinaryPreset,
       cache: false,
     );
     try {
@@ -75,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         color: Colors.green,
       );
     } catch (e) {
-      print("Upload Error:$e");
+      debugPrint("Upload Error:$e");
       if (!mounted) return;
       Utils.showSnackBar("Profile Image Upload Failed", color: Colors.red);
     } finally {
@@ -154,93 +157,111 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            Divider(color: Colors.grey.shade300),
-            ListView(
+            // Divider(color: Colors.grey.shade300),
+            // ListView(
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   children: [
+            //     ListTile(
+            //       onTap: (){
+            //         Get.to(() => const MyOrdersScreen());
+            //       },
+            //       leading: Icon(Icons.shopping_bag_outlined),
+            //       title: Text(
+            //         'Orders',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.credit_card),
+            //       title: Text(
+            //         'My Details',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.location_on),
+            //       title: Text(
+            //         'Delivery Address',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.payment_outlined),
+            //       title: Text(
+            //         'Payment Methods',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.local_offer_outlined),
+            //       title: Text(
+            //         'Promo Code',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.notifications_none_outlined),
+            //       title: Text(
+            //         'Notifications',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.help_outline),
+            //       title: Text(
+            //         'Help',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //     Divider(),
+            //
+            //     ListTile(
+            //       leading: Icon(Icons.info_outline),
+            //       title: Text(
+            //         'About',
+            //         style: GoogleFonts.poppins(fontSize: 14.sp),
+            //       ),
+            //       trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            //     ),
+            //   ],
+            // ),
+            ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              children: [
-                ListTile(
-                  onTap: (){
-                    Get.to(() => const MyOrdersScreen());
-                  },
-                  leading: Icon(Icons.shopping_bag_outlined),
+              itemCount: _profileItems.length,
+              separatorBuilder: (context, index) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final item = _profileItems[index];
+                return ListTile(
+                  onTap: item["onTap"],
+                  leading: Icon(item["icon"]),
                   title: Text(
-                    'Orders',
+                    item["title"],
                     style: GoogleFonts.poppins(fontSize: 14.sp),
                   ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.credit_card),
-                  title: Text(
-                    'My Details',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.location_on),
-                  title: Text(
-                    'Delivery Address',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.payment_outlined),
-                  title: Text(
-                    'Payment Methods',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.local_offer_outlined),
-                  title: Text(
-                    'Promo Code',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.notifications_none_outlined),
-                  title: Text(
-                    'Notifications',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.help_outline),
-                  title: Text(
-                    'Help',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-                Divider(),
-
-                ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text(
-                    'About',
-                    style: GoogleFonts.poppins(fontSize: 14.sp),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-              ],
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                );
+              },
             ),
             Padding(
               padding: EdgeInsets.all(20.w),
@@ -313,4 +334,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+  final List<Map<String, dynamic>> _profileItems = [
+    {
+      "title": "Orders",
+      "icon": Icons.shopping_bag_outlined,
+      "onTap": () => Get.to(() => const MyOrdersScreen()),
+    },
+    {"title": "My Details", "icon": Icons.credit_card},
+    {"title": "Delivery Address", "icon": Icons.location_on},
+    {"title": "Payment Methods", "icon": Icons.payment_outlined},
+    {"title": "Promo Code", "icon": Icons.local_offer_outlined},
+    {"title": "Notifications", "icon": Icons.notifications_none_outlined},
+    {"title": "Help", "icon": Icons.help_outline},
+    {"title": "About", "icon": Icons.info_outline},
+  ];
 }

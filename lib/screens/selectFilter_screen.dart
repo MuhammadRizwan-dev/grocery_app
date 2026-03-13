@@ -39,16 +39,11 @@ class _SelectfilterScreenState extends State<SelectfilterScreen> {
           icon: const Icon(Icons.close),
           onPressed: () {
             Get.back();
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (_) => SubproductsScreen()),
-            // );
           },
         ),
         title: Text(
           "Filters",
           style: TextStyle(
-            fontFamily: "Gilroy",
             fontWeight: FontWeight.w600,
             fontSize: 20.sp,
           ),
@@ -75,110 +70,148 @@ class _SelectfilterScreenState extends State<SelectfilterScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Categories",
-                      style: TextStyle(
-                        fontFamily: "Gilroy",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 24.sp,
-                      ),
+                    _buildFilterSection(
+                      title: "Categories",
+                      items: categories,
+                      selectedValue: selectedCategory,
+                      onSelect: (val) => setState(() => selectedCategory = val),
                     ),
-                    SizedBox(height: 20.h),
-                    Column(
-                      children: List.generate(categories.length, (index) {
-                        final title = categories[index];
-                        return Utils.filterItem(
-                          title: title,
-                          value: selectedCategory == title,
-                          //  title: categories[index]["title"],
-                          // value: categories[index]["value"],
-                          onTap: () {
-                            setState(() {
-                              selectedCategory = title;
-                            });
-                          },
-                          //  onTap: () {
-                          //    setState(() {
-                          //      categories[index]["value"] =
-                          //          !categories[index]["value"];
-                          //    });
-                          //  },
-                          //  onChanged: (val) {
-                          //    setState(() {
-                          //      categories[index]["value"] = val ?? false;
-                          //    });
-                          //  },
-                          onChanged: (_) {
-                            setState(() {
-                              selectedCategory = title;
-                            });
-                          },
-                        );
-                      }),
+                    _buildFilterSection(
+                      title: "Brands",
+                      items: brands,
+                      selectedValue: selectedBrand,
+                      onSelect: (val) => setState(() => selectedBrand = val),
                     ),
-                    SizedBox(height: 20.h,),
-                    Text(
-                      "Brands",
-                      style: TextStyle(
-                        fontFamily: "Gilroy",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 24.sp,
-                      ),
-                    ),
-                    SizedBox(height: 30.h),
-                    Column(
-                      children: List.generate(brands.length, (index) {
-                        final title = brands[index];
-                        return Utils.filterItem(
-                          title: title,
-                          value: selectedBrand == title,
-                          onTap: () {
-                            setState(() {
-                              selectedBrand = title;
-                            });
-                          },
-                          onChanged: (_) {
-                            setState(() {
-                              selectedBrand = title;
-                            });
-                          },
-                          // title: brands[index]["title"],
-                          // value: brands[index]["value"],
-                          // onTap: () {
-                          //   brands[index]["value"] = !brands[index]["value"];
-                          // },
-                          // onChanged: (val) {
-                          //   setState(() {
-                          //     brands[index]["value"] = val ?? false;
-                          //   });
-                          // },
-                        );
-                      }),
-                    ),SizedBox(height: 80.h,),
+
+                    SizedBox(height: 80.h),
                     AppButtons.socialButton(
-                      text: "Apply Filter",bgColor: AppColors.primaryColor,
+                      text: "Apply Filter",
+                      bgColor: AppColors.primaryColor,
                       onPressed: () {
-                        final _appliedText = selectedCategory ?? selectedBrand;
-                         Get.off(() => FilteredproductsScreen(appliedText: _appliedText ?? ""));
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return FilteredproductsScreen(
-                        //         appliedText: _appliedText ?? "",
-                        //       );
-                        //     },
-                        //   ),
-                        // );
+                        final appliedText = selectedCategory ?? selectedBrand;
+                        Get.off(() => FilteredproductsScreen(appliedText: appliedText ?? ""));
                       },
                     ),
                   ],
+                  // children: [
+                  //   Text(
+                  //     "Categories",
+                  //     style: TextStyle(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontSize: 24.sp,
+                  //     ),
+                  //   ),
+                  //   SizedBox(height: 20.h),
+                  //   Column(
+                  //     children: List.generate(categories.length, (index) {
+                  //       final title = categories[index];
+                  //       return Utils.filterItem(
+                  //         title: title,
+                  //         value: selectedCategory == title,
+                  //         onTap: () {
+                  //           setState(() {
+                  //             selectedCategory = title;
+                  //           });
+                  //         },
+                  //         //  onTap: () {
+                  //         //    setState(() {
+                  //         //      categories[index]["value"] =
+                  //         //          !categories[index]["value"];
+                  //         //    });
+                  //         //  },
+                  //         //  onChanged: (val) {
+                  //         //    setState(() {
+                  //         //      categories[index]["value"] = val ?? false;
+                  //         //    });
+                  //         //  },
+                  //         onChanged: (_) {
+                  //           setState(() {
+                  //             selectedCategory = title;
+                  //           });
+                  //         },
+                  //       );
+                  //     }),
+                  //   ),
+                  //   SizedBox(height: 20.h,),
+                  //   Text(
+                  //     "Brands",
+                  //     style: TextStyle(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontSize: 24.sp,
+                  //     ),
+                  //   ),
+                  //   SizedBox(height: 30.h),
+                  //   Column(
+                  //     children: List.generate(brands.length, (index) {
+                  //       final title = brands[index];
+                  //       return Utils.filterItem(
+                  //         title: title,
+                  //         value: selectedBrand == title,
+                  //         onTap: () {
+                  //           setState(() {
+                  //             selectedBrand = title;
+                  //           });
+                  //         },
+                  //         onChanged: (_) {
+                  //           setState(() {
+                  //             selectedBrand = title;
+                  //           });
+                  //         },
+                  //         // title: brands[index]["title"],
+                  //         // value: brands[index]["value"],
+                  //         // onTap: () {
+                  //         //   brands[index]["value"] = !brands[index]["value"];
+                  //         // },
+                  //         // onChanged: (val) {
+                  //         //   setState(() {
+                  //         //     brands[index]["value"] = val ?? false;
+                  //         //   });
+                  //         // },
+                  //       );
+                  //     }),
+                  //   ),SizedBox(height: 80.h,),
+                  //   AppButtons.socialButton(
+                  //     text: "Apply Filter",bgColor: AppColors.primaryColor,
+                  //     onPressed: () {
+                  //       final _appliedText = selectedCategory ?? selectedBrand;
+                  //        Get.off(() => FilteredproductsScreen(appliedText: _appliedText ?? ""));
+                  //     },
+                  //   ),
+                  // ],
                 ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+  Widget _buildFilterSection({
+    required String title,
+    required List<String> items,
+    required String? selectedValue,
+    required Function(String) onSelect,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24.sp),
+        ),
+        SizedBox(height: 20.h),
+        Column(
+          children: items.map((itemTitle) {
+            return Utils.filterItem(
+              title: itemTitle,
+              value: selectedValue == itemTitle,
+              onTap: () => onSelect(itemTitle),
+              onChanged: (_) => onSelect(itemTitle),
+            );
+          }).toList(),
+        ),
+        SizedBox(height: 20.h),
+      ],
     );
   }
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:grocery_app/screens/selectFilter_screen.dart';
 import 'package:grocery_app/screens/subProducts_screen.dart';
 
+import '../components/product_card.dart';
 import '../components/utils.dart';
+import '../controllers/cart_controller.dart';
 
 class FilteredproductsScreen extends StatefulWidget {
   final String appliedText;
@@ -16,6 +19,7 @@ class FilteredproductsScreen extends StatefulWidget {
 }
 
 class _FilteredproductsScreenState extends State<FilteredproductsScreen> {
+  final CartController cartController = Get.find();
   final List<Map<String, String>> allItems = [
     {
       "name": "Egg Chicken Red",
@@ -66,13 +70,9 @@ class _FilteredproductsScreenState extends State<FilteredproductsScreen> {
       final applied = widget.appliedText.toLowerCase().trim();
 
       if (applied.isEmpty) return true;
-
-      // Agar applied category name ho, keywords ke through match karo
       if (applied == "eggs") return name.contains("egg");
       if (applied == "noodles & pasta") return name.contains("pasta") || name.contains("noodle");
       if (applied == "fast food") return name.contains("burger") || name.contains("pizza");
-
-      // Direct text match bhi check karo
       return name.contains(applied);
     }).toList();
   }
@@ -159,105 +159,27 @@ class _FilteredproductsScreenState extends State<FilteredproductsScreen> {
             child: filteredItems.isEmpty
                 ? Center(child: Text("No items found"))
                 : GridView.builder(
-                    padding: EdgeInsets.all(12.w),
-                    itemCount: filteredItems.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12.w,
-                      crossAxisSpacing: 12.w,
-                      childAspectRatio: 0.75,
-                    ),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SubproductsScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(12.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18.r),
-                            border: Border.all(color: AppColors.verylightgrey),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Image.asset(
-                                  item["image"]!,
-                                  height: 90.h,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                item["name"]!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(height: 4.h),
-                              Text(
-                                item["details"]!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: const Color(0xFF7C7C7C),
-                                ),
-                              ),
-                              const Spacer(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "\$${item["price"]}",
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text("${item["name"]} added to Cart"),
-                                          duration: const Duration(milliseconds: 800),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      height: 36.h,
-                                      width: 36.w,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primaryColor,
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                        size: 18.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      );
-                    },
-                  ),
+              padding: EdgeInsets.all(12.w),
+              itemCount: filteredItems.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12.w,
+                crossAxisSpacing: 12.w,
+                childAspectRatio: 0.75,
+              ),
+              itemBuilder: (context, index) {
+                return ProductCard(
+                  item: filteredItems[index],
+                  onTap: () {
+                    Get.to(() => SubproductsScreen(item: filteredItems[index]));
+                  },
+                  onAdd: () {
+                    cartController.addToCart(filteredItems[index]);
+                    Utils.showSnackBar("${filteredItems[index]['name']} added to cart!");
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

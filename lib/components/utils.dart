@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -51,8 +52,7 @@ class Utils {
   static Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId:
-            "330946807876-p3174pnvc5ruhmhgjfh7evuke45fjtnh.apps.googleusercontent.com",
+        serverClientId:dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
         scopes: ['email'],
       );
 
@@ -180,7 +180,6 @@ class Utils {
             Text(
               title,
               style: TextStyle(
-                fontFamily: "Gilroy",
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
                 color: value ? color : Colors.black,
@@ -234,7 +233,6 @@ class Utils {
                         "Oops! Order Failed",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: "Gilroy",
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w700,
                           color: Colors.black87,
@@ -269,7 +267,6 @@ class Utils {
                           "Back to home",
                           style: TextStyle(
                             color: Colors.black,
-                            fontFamily: "Gilroy",
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -306,15 +303,12 @@ class Utils {
   static Future<void> requestLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
-
-    // 1. Check GPS Service
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       await Geolocator.openLocationSettings();
       return;
     }
 
-    // 2. Check current permission
     permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -377,7 +371,6 @@ class AppButtons {
               text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: "Gilroy",
                 color: AppColors.whiteColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 18.sp,
@@ -403,4 +396,8 @@ class AppGradients {
     ],
     stops: const [0.0, 0.4, 0.75, 1.0],
   );
+}
+class AppConfig {
+  static String get cloudinaryCloudName => dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+  static String get cloudinaryPreset => dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '';
 }

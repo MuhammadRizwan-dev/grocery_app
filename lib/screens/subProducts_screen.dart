@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:grocery_app/components/product_card.dart';
+import 'package:grocery_app/screens/productDetails_screen.dart';
 import 'package:grocery_app/screens/selectFilter_screen.dart';
 import '../components/utils.dart';
 import '../controllers/cart_controller.dart';
 
 class SubproductsScreen extends StatefulWidget {
-  const SubproductsScreen({super.key});
+   final Map<String , dynamic> item;
+  const SubproductsScreen({super.key,required this.item});
 
   @override
   State<SubproductsScreen> createState() => _SubproductsScreenState();
@@ -67,7 +70,7 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
         title: Text(
-          "Beverages",
+          widget.item["name"] ?? "Beverages",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
         ),
         centerTitle: true,
@@ -94,83 +97,98 @@ class _SubproductsScreenState extends State<SubproductsScreen> {
           childAspectRatio: 0.72,
         ),
         itemBuilder: (context, index) {
-          final item = subItems[index];
-          return Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18.r),
-              border: Border.all(color: AppColors.verylightgrey),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Image.asset(
-                    item["image"],
-                    height: 90.h,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  item["name"],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  item["details"],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: const Color(0xFF7C7C7C),
-                  ),
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "\$${item["price"]}",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        cartController.addToCart({
-                          "name": item["name"],
-                          "detail": item["details"],
-                          "price": item["price"],
-                          "image": item["image"],
-                          "qty": 1,
-                          "isNetwork": false,
-                        });
-                        Utils.showSnackBar("${item["name"]} added to Cart");
-                      },
-                      child: Container(
-                        height: 35.h,
-                        width: 35.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Icon(Icons.add, color: Colors.white, size: 18.sp),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
+          final currentItem = subItems[index];
+          return ProductCard(
+
+              item: currentItem, onTap:(){
+            Get.to(() => ProductDetailScreen(product: currentItem));
+          }, onAdd:(){
+            cartController.addToCart({
+              "name": currentItem["name"],
+              "detail": currentItem["details"],
+              "price": currentItem["price"],
+              "image": currentItem["image"],
+              "qty": 1,
+              "isNetwork": false,
+            });
+            Utils.showSnackBar("${currentItem["name"]} added to Cart");
+          });
+          // return Container(
+          //   padding: EdgeInsets.all(12.w),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     borderRadius: BorderRadius.circular(18.r),
+          //     border: Border.all(color: AppColors.verylightgrey),
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Center(
+          //         child: Image.asset(
+          //           item["image"],
+          //           height: 90.h,
+          //           fit: BoxFit.contain,
+          //         ),
+          //       ),
+          //       SizedBox(height: 12.h),
+          //       Text(
+          //         item["name"],
+          //         maxLines: 1,
+          //         overflow: TextOverflow.ellipsis,
+          //         style: TextStyle(
+          //           fontSize: 16.sp,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //       SizedBox(height: 4.h),
+          //       Text(
+          //         item["details"],
+          //         maxLines: 1,
+          //         overflow: TextOverflow.ellipsis,
+          //         style: TextStyle(
+          //           fontSize: 14.sp,
+          //           color: const Color(0xFF7C7C7C),
+          //         ),
+          //       ),
+          //       const Spacer(),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           Text(
+          //             "\$${item["price"]}",
+          //             style: TextStyle(
+          //               fontSize: 16.sp,
+          //               color: Colors.green,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //           GestureDetector(
+          //             onTap: () {
+          //               cartController.addToCart({
+          //                 "name": item["name"],
+          //                 "detail": item["details"],
+          //                 "price": item["price"],
+          //                 "image": item["image"],
+          //                 "qty": 1,
+          //                 "isNetwork": false,
+          //               });
+          //               Utils.showSnackBar("${item["name"]} added to Cart");
+          //             },
+          //             child: Container(
+          //               height: 35.h,
+          //               width: 35.w,
+          //               decoration: BoxDecoration(
+          //                 color: AppColors.primaryColor,
+          //                 borderRadius: BorderRadius.circular(10.r),
+          //               ),
+          //               child: Icon(Icons.add, color: Colors.white, size: 18.sp),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // );
         },
       ),
     );

@@ -31,13 +31,9 @@ class CartController extends GetxController {
   }
 
   double get totalPrice {
-    double total = 0;
-    for (var item in cartItems) {
-      double price = double.parse(
-        item["price"].toString().replaceAll("\$", ""),
-      );
-      total += price* item["qty"];
-    }
-    return total;
+    return cartItems.fold(0.0, (sum, item) {
+      double price = double.tryParse(item["price"].toString().replaceAll("\$", "")) ?? 0.0;
+      return sum + (price * item["qty"]);
+    });
   }
 }

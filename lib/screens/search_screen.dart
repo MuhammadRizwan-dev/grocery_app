@@ -109,7 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 final item = filteredItems[index];
                 return GestureDetector(
-                  onTap: () => Get.to(()=> SubproductsScreen()),
+                  onTap: () => Get.to(()=> SubproductsScreen(item: item,)),
                   child: Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:grocery_app/components/utils.dart';
@@ -15,18 +16,7 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  final List<String> myStripeSecrets = [
-    "pi_3T8laTJ9jDKffTGg1Dsj41ke_secret_XPnaxPOPXNqYKkKHsfJ4nFRNB",
-    "pi_3T8laCJ9jDKffTGg0CxF7cm7_secret_fP6oBi0za44HoBiyrsDCsW5KI",
-    "pi_3T8lRkJ9jDKffTGg1Dh8dP37_secret_fuJoGZSvJSYTvna00kgPGfiNE",
-    "pi_3T8lRRJ9jDKffTGg05esNfaR_secret_Dj0ZKvpCSYwEt9JGICd3ebyRh",
-    "pi_3T8iXcJ9jDKffTGg1qxau3Lo_secret_daiIXblwzavs9ohMsCM46BM5X",
-    "pi_3T8iYHJ9jDKffTGg0aOHmYHu_secret_wqJCVv8ch1fi1wgGaYUCPjXAW",
-    "pi_3T8iYYJ9jDKffTGg1QR2ASgS_secret_UWdwri2sI2YwjtkF4PKDNYRqD",
-    "pi_3T8iYnJ9jDKffTGg0cFWNVDd_secret_97LsxL0IrMnbCo8fnGvoAeevK",
-    "pi_3T8iZ5J9jDKffTGg0aydjPHr_secret_Ms9BSOyeaijyMmIQKru7jScaK",
-  ];
-  static int secretIndex = 0;
+  final  demoSecret = dotenv.env['STRIPE_SECRET']??"";
   final CartController cartController = Get.find();
   final OrderController orderController = Get.put(OrderController());
   String selectedDeliveryMethod = "Selected Method";
@@ -146,17 +136,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                 if (selectedPaymentMethod == "Credit Card") {
                   try {
-                    if (secretIndex >= myStripeSecrets.length) {
-                      Utils.showSnackBar(
-                        "No more test secrets left. Generate more!",
-                        color: Colors.orange,
-                      );
+                    if (demoSecret.isEmpty) {
+                      Utils.showSnackBar("Payment key missing in .env", color: Colors.orange);
                       return;
                     }
-                    String currentSecret = myStripeSecrets[secretIndex];
                     await Stripe.instance.initPaymentSheet(
                       paymentSheetParameters: SetupPaymentSheetParameters(
-                        paymentIntentClientSecret: currentSecret,
+                        paymentIntentClientSecret: demoSecret,
                         merchantDisplayName: 'Fresh Grocery Store',
                         appearance: PaymentSheetAppearance(
                           colors: PaymentSheetAppearanceColors(
@@ -190,9 +176,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     );
                     await Stripe.instance.presentPaymentSheet();
-                    setState(() {
-                      secretIndex++;
-                    });
                     await _finishOrder(itemsForOrder, "Credit Card", "Paid");
                   } catch (e) {
                     if (e is StripeException) {

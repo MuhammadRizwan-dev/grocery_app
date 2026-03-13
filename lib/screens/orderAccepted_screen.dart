@@ -69,7 +69,6 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                         ? "Waiting for Shop\nto Confirm..."
                         : "Your Order has been\naccepted",
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       height: 1.3,
@@ -82,7 +81,6 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                         : "Your items have been placed and are on \n it’s way to being processed",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w400,
                       color: AppColors.lightGrey,
@@ -113,7 +111,6 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.redAccent,
-                            fontFamily: "Gilroy",
                             fontWeight: FontWeight.w700,
                             fontSize: 18.sp,
                           ),
@@ -152,7 +149,6 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,
-                                fontFamily: "Gilroy",
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20.sp,
                               ),
@@ -162,28 +158,6 @@ class _OrderAcceptedScreenState extends State<OrderAcceptedScreen> {
                       ],
                     ),
                   ),
-                  // Center(
-                  //   child: TextButton(
-                  //     onPressed: () {
-                  //       Get.offAll(() => AppRoot());
-                  //     },
-                  //     child: Text(
-                  //       textAlign: TextAlign.center,
-                  //       "Back to home",
-                  //       style: TextStyle(
-                  //         color: Colors.black,
-                  //         fontFamily: "Gilroy",
-                  //         fontWeight: FontWeight.w600,
-                  //         fontSize: 20.sp,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // AppButtons.socialButton(
-                  //   text: "Back To Home",
-                  //   onPressed: () {},
-                  //   bgColor: Colors.transparent,
-                  // ),
                 ],
               ),
             ),

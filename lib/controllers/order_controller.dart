@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:geolocator/geolocator.dart';
 
 class OrderController extends GetxController {
+  StreamSubscription? _ordersListSub;
+  StreamSubscription? _notificationsSub;
+  StreamSubscription? _trackingSub;
   final AudioPlayer _audioPlayer = AudioPlayer();
   var myOrders = <QueryDocumentSnapshot>[].obs;
   var isLoading = true.obs;
@@ -22,13 +27,16 @@ class OrderController extends GetxController {
   @override
   void onClose() {
     _audioPlayer.dispose();
+    _ordersListSub?.cancel();
+    _notificationsSub?.cancel();
+    _trackingSub?.cancel();
     super.onClose();
   }
 
   void trackCurrentOrder(String orderId) {
     currentOrderStatus.value = "Pending";
 
-    FirebaseFirestore.instance
+    _trackingSub = FirebaseFirestore.instance
         .collection('orders')
         .doc(orderId)
         .snapshots()
@@ -48,7 +56,7 @@ class OrderController extends GetxController {
   void fetchOrders() {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
     if (uid.isNotEmpty) {
-      FirebaseFirestore.instance
+      _ordersListSub = FirebaseFirestore.instance
           .collection('orders')
           .where('userId', isEqualTo: uid)
           .snapshots()
@@ -86,7 +94,7 @@ class OrderController extends GetxController {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
 
     if (uid.isNotEmpty) {
-      FirebaseFirestore.instance
+      _notificationsSub = FirebaseFirestore.instance
           .collection('user_notifications')
           .where('userId', isEqualTo: uid)
           .where('isSeen', isEqualTo: false)

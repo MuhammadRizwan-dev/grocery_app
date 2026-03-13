@@ -15,9 +15,10 @@ class MyOrdersScreen extends StatefulWidget {
 }
 
 class _MyOrdersScreenState extends State<MyOrdersScreen> {
+  final OrderController orderController = Get.put(OrderController());
   @override
   Widget build(BuildContext context) {
-    final OrderController orderController = Get.put(OrderController());
+
 
     return Scaffold(
       backgroundColor: Colors.white,

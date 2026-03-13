@@ -175,11 +175,14 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
-                  AppButtons.socialButton(
-                    text:
-                        "Go To CheckOut \$${cartController.totalPrice.toStringAsFixed(2)}",
-                    onPressed: () => openCheckOutSheet(context),
-                    bgColor: AppColors.primaryColor,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+                    child: AppButtons.socialButton(
+                      text:
+                          "Go To CheckOut \$${cartController.totalPrice.toStringAsFixed(2)}",
+                      onPressed: () => openCheckOutSheet(context),
+                      bgColor: AppColors.primaryColor,
+                    ),
                   ),
                 ],
               ),

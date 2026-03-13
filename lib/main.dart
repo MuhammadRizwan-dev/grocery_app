@@ -6,14 +6,19 @@ import 'package:get/get.dart';
 import 'package:grocery_app/controllers/cart_controller.dart';
 import 'package:grocery_app/firebase_options.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'controllers/network_conroller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint("Warning: .env file not found");
+  }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  Stripe.publishableKey =
-      "pk_test_51T4toxJ9jDKffTGguBhZgc0jAIEQZYfL8BkWLYfDWjCQC3MPSa7bcVFmCvef6Ucj1KtTiGpqzejwt70n08LY8G0y00Wq2cRQRw";
+
+  Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? "";
   await Stripe.instance.applySettings();
   Get.put(NetworkController(), permanent: true);
   runApp(const MyApp());
@@ -38,7 +43,7 @@ class MyApp extends StatelessWidget {
           initialBinding: BindingsBuilder(() {
             Get.put(CartController());
           }),
-          theme: ThemeData(fontFamily: "Gilroy"),
+          theme: ThemeData(fontFamily: "Gilroy",),
           debugShowCheckedModeBanner: false,
           home: SplashScreen(),
         );

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../models/product_model.dart';
 
 class UserProductController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  StreamSubscription? _productSubscription;
   var firebaseProducts = <ProductModel>[].obs;
 
   var isLoading = true.obs;
@@ -13,16 +16,25 @@ class UserProductController extends GetxController {
     fetchProducts();
   }
 
+  @override
+  void onClose() {
+    _productSubscription?.cancel();
+    super.onClose();
+  }
+
   void fetchProducts() {
     try {
       isLoading(true);
-      _firestore.collection('products').snapshots().listen((snapshot) {
-        firebaseProducts.value = snapshot.docs.map((doc) {
-          return ProductModel.fromMap(doc.data(), doc.id);
-        }).toList();
+      _productSubscription = _firestore
+          .collection('products')
+          .snapshots()
+          .listen((snapshot) {
+            firebaseProducts.value = snapshot.docs.map((doc) {
+              return ProductModel.fromMap(doc.data(), doc.id);
+            }).toList();
 
-        isLoading(false);
-      });
+            isLoading(false);
+          });
     } catch (e) {
       isLoading(false);
       print("Error fetching products: $e");

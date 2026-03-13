@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> {
   int currentIndex = 0;
-
+  StreamSubscription? _userStatusSub;
   final List<Widget> screens = [
     ShopScreen(),
     SearchScreen(),
@@ -33,10 +35,14 @@ class _AppRootState extends State<AppRoot> {
     super.initState();
     checkUserStatus();
   }
-
+  @override
+  void dispose(){
+    _userStatusSub?.cancel();
+    super.dispose();
+  }
   void checkUserStatus() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    FirebaseFirestore.instance.collection('users').doc(uid).snapshots().listen((
+  _userStatusSub = FirebaseFirestore.instance.collection('users').doc(uid).snapshots().listen((
       snapshots,
     ) {
       if (snapshots.exists) {

@@ -16,19 +16,25 @@ class VerificationScreen extends StatefulWidget {
 
 class _VerificationScreenState extends State<VerificationScreen> {
   final TextEditingController otpController = TextEditingController();
+  bool _isLoading = false;
   void verifyOTP() async {
     if (otpController.text.length < 6) {
       Utils.showSnackBar("Enter valid OTP");
       return;
     }
+    setState(() => _isLoading = true);
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: widget.verificationId,
         smsCode: otpController.text.trim(),
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-     Get.to(()=> LocationScreen());
-    } catch (e) {Utils.showSnackBar("OTP Verification Failed");}
+      Get.offAll(() => LocationScreen());
+    } catch (e) {
+      Utils.showSnackBar("OTP Verification Failed");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -81,10 +87,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
             FloatingActionButton(
               backgroundColor: AppColors.primaryColor,
               shape: const CircleBorder(),
-              onPressed: () {
-                verifyOTP();
-              },
-              child: Icon(Icons.arrow_forward_ios, color: AppColors.whiteColor),
+              onPressed: _isLoading ? null : () => verifyOTP(),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Icon(Icons.arrow_forward_ios, color: AppColors.whiteColor),
             ),
           ],
         ),
@@ -111,7 +117,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   Text(
                     "Enter your 6-digit code",
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       fontWeight: FontWeight.w600,
                       fontSize: 26.sp,
                     ),
@@ -121,13 +126,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     "Code",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: "Gilroy",
                       color: AppColors.lightGrey,
                       fontWeight: FontWeight.w600,
                       fontSize: 16.sp,
                     ),
                   ),
-                  Apptextfield(hint: "- - - - - -",controller: otpController,),
+                  Apptextfield(
+                    hint: "- - - - - -",
+                    controller: otpController,
+                    keyboardType: TextInputType.number,
+                  ),
                   SizedBox(height: 120.h),
                 ],
               ),
