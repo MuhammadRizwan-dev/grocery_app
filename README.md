@@ -54,5 +54,5 @@ git clone https://github.com/MuhammadRizwan-dev/grocery_app.git
 ## 👤 Developer
 **Muhammad Rizwan** *Flutter Developer | Rahim Yar Khan, Pakistan*
 
-[![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-rizwan-dev)
+[![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-rizwan-developer)
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MuhammadRizwan-dev)
