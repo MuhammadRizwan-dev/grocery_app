@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -18,6 +20,8 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 165.w,
+        margin: EdgeInsets.only(right: 16.w),
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -29,8 +33,23 @@ class ProductCard extends StatelessWidget {
           children: [
             Center(
               child: item["isNetwork"] == true
-                  ? Image.network(item["image"]!, height: 90.h, fit: BoxFit.contain)
-                  : Image.asset(item["image"]!, height: 90.h, fit: BoxFit.contain),
+                  ? CachedNetworkImage(
+                      imageUrl: item["image"]!,
+                      height: 80.h,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey[200]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(height: 80.h, color: Colors.white),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.broken_image, size: 40.h),
+                    )
+                  : Image.asset(
+                      item["image"]!,
+                      height: 90.h,
+                      fit: BoxFit.contain,
+                    ),
             ),
             SizedBox(height: 12.h),
             Text(
@@ -48,8 +67,11 @@ class ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "\$${item["price"]}",
-                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  "\$${item["price"].toString()}",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 GestureDetector(
                   onTap: onAdd,
