@@ -38,7 +38,7 @@ Contact me for demo, collaboration, or access details.
 ![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
 ![GetX](https://img.shields.io/badge/GetX-800080?style=for-the-badge&logo=flutter&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-626CD9?style=for-the-badge&logo=Stripe&logoColor=white)
-![Google Maps](https://img.shields.io/badge/Google%20Maps-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white)
+![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-%237EBC6F.svg?style=for-the-badge&logo=OpenStreetMap&logoColor=white)
 
 ---
 
@@ -51,6 +51,12 @@ git clone https://github.com/MuhammadRizwan-dev/grocery_app.git
 ```
 ---
 
+## 🚀 Hire Me for Your Project
+If you want to build a professional grocery app for your business or need custom features, feel free to hire me on **Fiverr**:
+
+[![Hire Me on Fiverr](https://img.shields.io/badge/Fiverr-Hire%20Me-green?style=for-the-badge&logo=fiverr)](https://www.fiverr.com/s/Q7mrwgR)
+
+---
 ## 👤 Developer
 **Muhammad Rizwan** *Flutter Developer | Rahim Yar Khan, Pakistan*
 
