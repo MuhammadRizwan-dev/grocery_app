@@ -23,6 +23,18 @@ Nectar is a premium grocery e-commerce application built with Flutter. It featur
 
 ---
 
+## 📍 Location & Mapping Architecture
+The application features a robust mapping system designed for real-time delivery tracking. To provide a cost-effective yet scalable solution, I implemented a hybrid mapping strategy:
+
+- **🛰️ OpenStreetMap (OSM) Integration:** Currently utilizing `flutter_map` with OSM tiles for high-performance, license-free map rendering.
+- **🚀 Modular Mapping Logic:** The codebase follows a provider-pattern architecture, making it **100% Plug-and-Play for Google Maps API**.
+- **🛠️ Key Technical Solved Challenges:**
+    - **Custom Markers:** Real-time marker updates for User and Delivery Rider locations.
+    - **Polyline Routing:** Dynamic path rendering from the store to the user’s destination.
+    - **Geocoding:** Converting coordinates into readable addresses for easy order management.
+
+---
+
 ## 👨‍💼 Admin Panel Integration
 This User App is powered by a dedicated **Admin Dashboard** for real-time management.
 Admin Dashboard: Separate private repository (not public for security reasons). 

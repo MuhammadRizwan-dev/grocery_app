@@ -106,6 +106,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
           : Stack(
         children: [
           GoogleMap(
+            mapType: MapType.normal,
             initialCameraPosition: CameraPosition(target: _riderPosition, zoom: 15),
             onMapCreated: (controller) => _controller.complete(controller),
             myLocationButtonEnabled: false,
