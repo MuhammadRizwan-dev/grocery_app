@@ -6,6 +6,13 @@ plugins {
     // Firebase Plugin
     id("com.google.gms.google-services")
 }
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
 
 android {
     namespace = "com.app.grocery_app"
@@ -26,6 +33,7 @@ android {
         applicationId = "com.app.grocery_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        manifestPlaceholders = [mapsApiKey: localProperties.getProperty("MAPS_API_KEY")]
         minSdk = 24
         targetSdk = 36
         versionCode = flutter.versionCode

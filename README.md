@@ -18,28 +18,31 @@ Nectar is a premium grocery e-commerce application built with Flutter. It featur
 - **🔐 Social Authentication:** Secure login using Google, Facebook, and Email via Firebase Auth.
 - **🔍 Advanced Filtering:** Complex category and brand-based product filtering logic.
 - **💳 Stripe Payment:** Integrated secure payment gateway for seamless checkout experience.
-- **📍 Order Tracking:** Real-time map integration to trace delivery status and rider location.
+- **📍 Real-Time Tracking:** Professional **Google Maps SDK** integration for live delivery tracing.
 - **⚡ State Management:** Highly performant architecture using `GetX` for reactive updates.
 
 ---
 
-## 📍 Location & Mapping Architecture
-The application features a robust mapping system designed for real-time delivery tracking. To provide a cost-effective yet scalable solution, I implemented a hybrid mapping strategy:
+## 📍 Advanced Mapping & Security Architecture
+The application features a robust mapping system. While the codebase retains legacy support for OpenStreetMap (OSM), it is currently fully optimized for **Google Maps SDK**.
 
-- **🛰️ OpenStreetMap (OSM) Integration:** Currently utilizing `flutter_map` with OSM tiles for high-performance, license-free map rendering.
-- **🚀 Modular Mapping Logic:** The codebase follows a provider-pattern architecture, making it **100% Plug-and-Play for Google Maps API**.
-- **🛠️ Key Technical Solved Challenges:**
-    - **Custom Markers:** Real-time marker updates for User and Delivery Rider locations.
-    - **Polyline Routing:** Dynamic path rendering from the store to the user’s destination.
-    - **Geocoding:** Converting coordinates into readable addresses for easy order management.
+### 🔐 Security Implementation (Anti-Leak)
+To protect sensitive data and billing accounts, I implemented a **Zero-Leak API Strategy**:
+- **Local Properties Injection:** Google Maps API keys are never hardcoded in the `AndroidManifest.xml`.
+- **Gradle Placeholders:** Keys are injected at build-time using `local.properties` and `manifestPlaceholders`.
+- **Git Protection:** Sensitive configuration files are strictly managed via `.gitignore` to prevent public exposure.
+
+### 🛠️ Mapping Features:
+- **Live Rider Tracking:** Real-time marker updates using stream-based location data.
+- **Dynamic Polyline Routing:** Visual path rendering from store to user destination.
+- **Custom Markers:** Branded UI elements for riders and delivery points.
 
 ---
 
 ## 👨‍💼 Admin Panel Integration
 This User App is powered by a dedicated **Admin Dashboard** for real-time management.
-Admin Dashboard: Separate private repository (not public for security reasons). 
-Contact me for demo, collaboration, or access details.
 - **Functions:** Adding new inventory, managing product stock, and processing user orders.
+  *Note: Admin Dashboard is a separate private repository. Contact for access.*
 
 ---
 
@@ -47,30 +50,24 @@ Contact me for demo, collaboration, or access details.
 
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)
-![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![Google Maps](https://img.shields.io/badge/Google%20Maps-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white)
 ![GetX](https://img.shields.io/badge/GetX-800080?style=for-the-badge&logo=flutter&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-626CD9?style=for-the-badge&logo=Stripe&logoColor=white)
-![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-%237EBC6F.svg?style=for-the-badge&logo=OpenStreetMap&logoColor=white)
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Portfolio & Hire Me
+I am a specialized **Flutter & Python Developer** focused on building scalable automation tools and e-commerce solutions.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/MuhammadRizwan-dev/grocery_app.git
-
-```
----
-
-## 🚀 Hire Me for Your Project
-If you want to build a professional grocery app for your business or need custom features, feel free to hire me on **Fiverr**:
-
-[![Hire Me on Fiverr](https://img.shields.io/badge/Fiverr-Hire%20Me-green?style=for-the-badge&logo=fiverr)](https://www.fiverr.com/s/Q7mrwgR)
+- **🌐 Live Portfolio:** [Visit Muhammad Rizwan's Portfolio](https://muhammadrizwan-dev.github.io/my_portfolio/)
+- **🟢 Fiverr:** [Hire Me for Custom Projects](https://www.fiverr.com/s/Q7mrwgR)
 
 ---
-## 👤 Developer
-**Muhammad Rizwan** *Flutter Developer | Rahim Yar Khan, Pakistan*
+
+## 👤 Developer Details
+**Muhammad Rizwan**
+*Computer Science Student & Flutter Developer*
+📍 Rahim Yar Khan, Punjab, Pakistan
 
 [![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammad-rizwan-developer)
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MuhammadRizwan-dev)
