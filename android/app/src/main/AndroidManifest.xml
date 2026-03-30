@@ -11,7 +11,7 @@
         android:enableOnBackInvokedCallback="true">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDYlPLYUnqBQISt57QHh76nQJ5Oi0EpNeU"/>
+            android:value="AIzaSyCL2nqThmh7f1cs3iRkXAQn5yfY1JczC8I"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
         <activity android:name="com.facebook.FacebookActivity"

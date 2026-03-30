@@ -97,7 +97,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Tracking Order",
-            style: TextStyle(fontFamily: "Gilroy", fontWeight: FontWeight.bold, fontSize: 18.sp)),
+            style: TextStyle( fontWeight: FontWeight.bold, fontSize: 18.sp)),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),
