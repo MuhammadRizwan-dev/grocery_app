@@ -19,7 +19,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.app.grocery_app"
-    compileSdk = 34 // Stability ke liye 34 best hai
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -34,11 +34,10 @@ android {
     defaultConfig {
         applicationId = "com.app.grocery_app"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // Maps API Key placeholder
         manifestPlaceholders["mapsApiKey"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
     }
 

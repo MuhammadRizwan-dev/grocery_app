@@ -43,6 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+# Android build artifacts ko ignore karne ke liye
+**/android/build/
+**/android/app/build/
+**/android/.gradle/
 # Firebase Configuration (Private Keys)
 **/google-services.json
 **/GoogleService-Info.plist
